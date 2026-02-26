@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/alf4ridzi/library-crud-ent-echo/delivery/http/handler"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/handler"
 	"github.com/labstack/echo/v5"
 )
 
