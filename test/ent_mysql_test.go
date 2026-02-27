@@ -27,3 +27,19 @@ func TestConnectionHealthMysql(t *testing.T) {
 
 	log.Print("seems ok")
 }
+
+func TestQueryMysql(t *testing.T) {
+	if err := config.LoadEnv(); err != nil {
+		t.Fatal(err)
+	}
+
+	db, err := database.NewMysqlEnt()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer db.Close()
+
+	users := db.User.Query().AllX(context.Background())
+	t.Log(users)
+}
