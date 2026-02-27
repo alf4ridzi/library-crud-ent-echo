@@ -9,6 +9,10 @@ type AuthHandler struct {
 	authService service.AuthService
 }
 
+func NewAuthHandler(authService service.AuthService) *AuthHandler {
+	return &AuthHandler{authService: authService}
+}
+
 func (h *AuthHandler) Login(c *echo.Context) error {
 	return nil
 }
