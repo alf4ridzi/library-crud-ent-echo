@@ -18,6 +18,7 @@ import (
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/repository"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
+	echoMiddleware "github.com/labstack/echo/v5/middleware"
 )
 
 func startServer(e *echo.Echo) {
@@ -60,6 +61,7 @@ func main() {
 	defer client.Close()
 
 	e.Validator = middleware.NewValidator()
+	e.Use(echoMiddleware.ContextTimeout(60 * time.Second))
 
 	userRepo := repository.NewUserRepository(client)
 	authService := service.NewAuthService(userRepo)

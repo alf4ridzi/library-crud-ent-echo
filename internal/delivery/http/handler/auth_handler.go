@@ -37,6 +37,8 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 		)
 	}
 
+	// ctx, cancel := ctxutil.WithTimeout(c.Request().Context(), 2*time.Second)
+	// defer cancel()
 	return nil
 }
 
