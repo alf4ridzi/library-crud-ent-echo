@@ -1,6 +1,9 @@
 package middleware
 
 import (
+	"reflect"
+	"strings"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -9,8 +12,18 @@ type CustomValidator struct {
 }
 
 func NewValidator() *CustomValidator {
+	v := validator.New()
+
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.Split(fld.Tag.Get("json"), ",")[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
 	return &CustomValidator{
-		validator: validator.New(),
+		validator: v,
 	}
 }
 

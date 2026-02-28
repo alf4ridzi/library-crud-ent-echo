@@ -33,7 +33,7 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		return response.Fail(c,
 			http.StatusBadRequest,
-			response.FormatValidationError(err, req),
+			response.ValidationErrors(err),
 		)
 	}
 
