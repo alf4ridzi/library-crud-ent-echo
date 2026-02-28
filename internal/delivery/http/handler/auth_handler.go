@@ -2,9 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/response"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/helpers"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/pkg/ctxutil"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
 )
@@ -37,9 +41,21 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 		)
 	}
 
-	// ctx, cancel := ctxutil.WithTimeout(c.Request().Context(), 2*time.Second)
-	// defer cancel()
-	return nil
+	ctx, cancel := ctxutil.WithTimeout(c.Request().Context(), 2*time.Second)
+	defer cancel()
+
+	err := h.authService.Register(ctx, req)
+	if err != nil {
+		switch {
+		case ent.IsConstraintError(err):
+			return response.Fail(c, http.StatusConflict, helpers.ParseConstraintError(err))
+		default:
+			return response.Error(c, http.StatusInternalServerError, err.Error())
+		}
+
+	}
+
+	return response.Success(c, req)
 }
 
 func (h *AuthHandler) Refresh(c *echo.Context) error {

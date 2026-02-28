@@ -8,7 +8,7 @@ import (
 )
 
 type UserRepository interface {
-	Create(ctx context.Context, user ent.User) error
+	Create(ctx context.Context, user *ent.User) error
 }
 
 type userRepositoryImpl struct {
@@ -19,7 +19,7 @@ func NewUserRepository(client *ent.Client) UserRepository {
 	return &userRepositoryImpl{DB: client}
 }
 
-func (r *userRepositoryImpl) Create(ctx context.Context, user ent.User) error {
+func (r *userRepositoryImpl) Create(ctx context.Context, user *ent.User) error {
 	_, err := r.DB.User.Create().
 		SetEmail(user.Email).
 		SetName(*user.Name).

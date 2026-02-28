@@ -36,7 +36,7 @@ func TestCreateUser(t *testing.T) {
 		Password: "test123",
 	}
 
-	err = repo.Create(ctx, user)
+	err = repo.Create(ctx, &user)
 	if err != nil {
 		t.Fatal(err)
 	}
