@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/response"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
 )
@@ -14,11 +15,21 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) Login(c *echo.Context) error {
-	return nil
+	return c.JSON(200, map[string]string{
+		"message": "ok",
+	})
 }
 
 func (h *AuthHandler) Register(c *echo.Context) error {
-	return nil
+	// req := new(dto.RegisterRequest)
+
+	// if err := c.Bind(req); err != nil {
+
+	// }
+
+	return response.Success(c, map[string]string{
+		"ok": "ok",
+	})
 }
 
 func (h *AuthHandler) Refresh(c *echo.Context) error {
