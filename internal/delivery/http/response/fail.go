@@ -5,5 +5,8 @@ import (
 )
 
 func Fail(c *echo.Context, statusCode int, data any) error {
-	return c.JSON(statusCode, data)
+	return c.JSON(statusCode, FailResponse{
+		Response: Response{Status: "fail"},
+		Data:     data,
+	})
 }

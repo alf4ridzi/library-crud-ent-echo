@@ -5,6 +5,7 @@ import (
 
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/config"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/handler"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/middleware"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/routes"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/infrastructure/database"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/repository"
@@ -23,6 +24,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect to database : %v", err)
 	}
+
+	e.Validator = middleware.NewValidator()
 
 	userRepo := repository.NewUserRepository(client)
 	authService := service.NewAuthService(userRepo)
