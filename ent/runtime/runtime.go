@@ -2,7 +2,18 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/alf4ridzi/library-crud-ent-echo/ent/runtime.go
+import (
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/schema"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
+)
+
+// The init function reads all schema descriptors with runtime code
+// (default values, validators, hooks and policies) and stitches it
+// to their package variables.
+func init() {
+	userHooks := schema.User{}.Hooks()
+	user.Hooks[0] = userHooks[0]
+}
 
 const (
 	Version = "v0.14.5"                                         // Version of ent codegen.

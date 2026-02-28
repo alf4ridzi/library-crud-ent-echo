@@ -1,10 +1,15 @@
 package service
 
 import (
+	"context"
+
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/repository"
 )
 
-type AuthService interface{}
+type AuthService interface {
+	Register(ctx context.Context, reg dto.RegisterRequest)
+}
 
 type authServiceImpl struct {
 	userRepo repository.UserRepository
@@ -12,4 +17,8 @@ type authServiceImpl struct {
 
 func NewAuthService(userRepo repository.UserRepository) AuthService {
 	return &authServiceImpl{userRepo: userRepo}
+}
+
+func (s *authServiceImpl) Register(ctx context.Context, reg dto.RegisterRequest) {
+
 }
