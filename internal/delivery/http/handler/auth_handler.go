@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
@@ -38,8 +39,22 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		)
 	}
 
-	return nil
+	user, err := h.authService.Login(c.Request().Context(), req)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrInvalidCredentials):
+			return response.Fail(
+				c,
+				http.StatusUnauthorized,
+				response.Message(err.Error()),
+			)
+		}
+	}
 
+	return response.Success(
+		c,
+		user,
+	)
 }
 
 func (h *AuthHandler) Register(c *echo.Context) error {

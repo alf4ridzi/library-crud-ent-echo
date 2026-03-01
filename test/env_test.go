@@ -11,5 +11,6 @@ func TestEnv(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Log(config.AppConfig.DBHost)
+	t.Log(config.AppConfig.JwtAuthSecret)
+	t.Log(config.AppConfig.JwtRefreshSecret)
 }

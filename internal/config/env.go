@@ -13,11 +13,13 @@ var (
 )
 
 type MysqlConfigEnv struct {
-	DBHost     string `mapstructure:"MYSQL_DB_HOST"`
-	DBName     string `mapstructure:"MYSQL_DB_NAME"`
-	DBUserName string `mapstructure:"MYSQL_DB_USERNAME"`
-	DBPassword string `mapstructure:"MYSQL_DB_PASSWORD"`
-	DBPort     int    `mapstructure:"MYSQL_DB_PORT"`
+	DBHost           string `mapstructure:"MYSQL_DB_HOST"`
+	DBName           string `mapstructure:"MYSQL_DB_NAME"`
+	DBUserName       string `mapstructure:"MYSQL_DB_USERNAME"`
+	DBPassword       string `mapstructure:"MYSQL_DB_PASSWORD"`
+	DBPort           int    `mapstructure:"MYSQL_DB_PORT"`
+	JwtAuthSecret    string `mapstructure:"JWT_AUTH_SECRET"`
+	JwtRefreshSecret string `mapstructure:"JWT_REFRESH_SECRET"`
 }
 
 func LoadEnv() error {
