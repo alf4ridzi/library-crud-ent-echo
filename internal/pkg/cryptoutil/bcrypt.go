@@ -1,4 +1,4 @@
-package crypto
+package cryptoutil
 
 import "golang.org/x/crypto/bcrypt"
 

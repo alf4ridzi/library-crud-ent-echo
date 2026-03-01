@@ -5,9 +5,13 @@ import (
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	_ "github.com/alf4ridzi/library-crud-ent-echo/ent/runtime"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
 type UserRepository interface {
+	FindByEmail(ctx context.Context, email string) (*ent.User, error)
+	FindByUsername(ctx context.Context, username string) (*ent.User, error)
+	FindByUsernameOrEmail(ctx context.Context, username *string, email *string) (*ent.User, error)
 	Create(ctx context.Context, user *ent.User) error
 }
 
@@ -17,6 +21,27 @@ type userRepositoryImpl struct {
 
 func NewUserRepository(client *ent.Client) UserRepository {
 	return &userRepositoryImpl{DB: client}
+}
+
+func (r *userRepositoryImpl) FindByEmail(ctx context.Context, email string) (*ent.User, error) {
+	return r.DB.User.Query().Where(
+		user.Email(email),
+	).First(ctx)
+}
+
+func (r *userRepositoryImpl) FindByUsername(ctx context.Context, username string) (*ent.User, error) {
+	return r.DB.User.Query().Where(
+		user.Username(username),
+	).First(ctx)
+}
+
+func (r *userRepositoryImpl) FindByUsernameOrEmail(ctx context.Context, username *string, email *string) (*ent.User, error) {
+	return r.DB.User.Query().Where(
+		user.Or(
+			user.Username(*username),
+			user.Email(*email),
+		),
+	).First(ctx)
 }
 
 func (r *userRepositoryImpl) Create(ctx context.Context, user *ent.User) error {
