@@ -2,13 +2,11 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/response"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/helpers"
-	"github.com/alf4ridzi/library-crud-ent-echo/internal/pkg/ctxutil"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
 )
@@ -22,9 +20,26 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) Login(c *echo.Context) error {
-	return c.JSON(200, map[string]string{
-		"message": "ok",
-	})
+	req := new(dto.LoginRequest)
+
+	if err := c.Bind(req); err != nil {
+		return response.Fail(
+			c,
+			http.StatusBadRequest,
+			err,
+		)
+	}
+
+	if err := c.Validate(req); err != nil {
+		return response.Fail(
+			c,
+			http.StatusBadRequest,
+			response.ValidationErrors(err),
+		)
+	}
+
+	return nil
+
 }
 
 func (h *AuthHandler) Register(c *echo.Context) error {
@@ -41,10 +56,7 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 		)
 	}
 
-	ctx, cancel := ctxutil.WithTimeout(c.Request().Context(), 2*time.Second)
-	defer cancel()
-
-	err := h.authService.Register(ctx, req)
+	err := h.authService.Register(c.Request().Context(), req)
 	if err != nil {
 		switch {
 		case ent.IsConstraintError(err):
@@ -55,7 +67,9 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 
 	}
 
-	return response.Success(c, req)
+	return response.Success(c, response.MessageResponse{
+		Message: "user registered successfully",
+	})
 }
 
 func (h *AuthHandler) Refresh(c *echo.Context) error {

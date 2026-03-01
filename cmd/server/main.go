@@ -62,6 +62,7 @@ func main() {
 
 	e.Validator = middleware.NewValidator()
 	e.Use(echoMiddleware.ContextTimeout(60 * time.Second))
+	e.Use(middleware.TimeoutMiddleware)
 
 	userRepo := repository.NewUserRepository(client)
 	authService := service.NewAuthService(userRepo)
