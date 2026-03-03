@@ -38,7 +38,7 @@ func LoadEnv() error {
 	}
 
 	tempEnv := &env{}
-	err := viper.Unmarshal(&tempEnv.MysqlConfigEnv)
+	err := viper.Unmarshal(tempEnv)
 	if err != nil {
 		return err
 	}
