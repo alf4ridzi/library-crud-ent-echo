@@ -65,7 +65,7 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		)
 	}
 
-	refreshToken, err := tokenutil.GenerateRefreshToken(userID, time.Duration(7)*time.Hour)
+	refreshToken, err := tokenutil.GenerateRefreshToken(userID, time.Duration(7)*24*time.Hour)
 	if err != nil {
 		return response.Error(
 			c,
