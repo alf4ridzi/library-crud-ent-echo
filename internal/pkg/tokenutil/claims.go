@@ -2,6 +2,10 @@ package tokenutil
 
 import "github.com/golang-jwt/jwt/v5"
 
-type ClaimsUserJWT struct {
+type ClaimsAccessJWT struct {
+	jwt.RegisteredClaims
+}
+
+type ClaimsRefreshJWT struct {
 	jwt.RegisteredClaims
 }

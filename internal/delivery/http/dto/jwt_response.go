@@ -1,7 +1,7 @@
 package dto
 
 type AuthJwtResponse struct {
-	Auth    string `json:"auth"`
+	Access  string `json:"access"`
 	Refresh string `json:"refresh"`
 }
 

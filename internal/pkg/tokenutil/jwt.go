@@ -7,8 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateAuthToken(userID string, expired time.Duration) (string, error) {
-	claims := ClaimsUserJWT{
+func GenerateAccessToken(userID string, expired time.Duration) (string, error) {
+	claims := ClaimsAccessJWT{
 		jwt.RegisteredClaims{
 			Subject:   userID,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expired)),
@@ -17,7 +17,25 @@ func GenerateAuthToken(userID string, expired time.Duration) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signed, err := token.SignedString([]byte(config.AppConfig.JwtAuthSecret))
+	signed, err := token.SignedString([]byte(config.AppConfig.JwtAccessSecret))
+	if err != nil {
+		return "", err
+	}
+
+	return signed, nil
+}
+
+func GenerateRefreshToken(userID string, expired time.Duration) (string, error) {
+	claims := ClaimsRefreshJWT{
+		jwt.RegisteredClaims{
+			Subject:   userID,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expired)),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	signed, err := token.SignedString([]byte(config.AppConfig.JwtRefreshSecret))
 	if err != nil {
 		return "", err
 	}

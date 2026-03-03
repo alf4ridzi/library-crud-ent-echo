@@ -22,7 +22,7 @@ type MysqlConfigEnv struct {
 }
 
 type JwtConfigEnv struct {
-	JwtAuthSecret    string `mapstructure:"JWT_AUTH_SECRET"`
+	JwtAccessSecret  string `mapstructure:"JWT_ACCESS_SECRET"`
 	JwtRefreshSecret string `mapstructure:"JWT_REFRESH_SECRET"`
 }
 

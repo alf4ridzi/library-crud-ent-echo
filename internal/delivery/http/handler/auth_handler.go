@@ -56,7 +56,16 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 
 	userID := strconv.Itoa(user.ID)
 
-	tokenAuth, err := tokenutil.GenerateAuthToken(userID, time.Duration(1)*time.Hour)
+	accessToken, err := tokenutil.GenerateAccessToken(userID, time.Duration(1)*time.Hour)
+	if err != nil {
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
+	}
+
+	refreshToken, err := tokenutil.GenerateRefreshToken(userID, time.Duration(7)*time.Hour)
 	if err != nil {
 		return response.Error(
 			c,
@@ -69,8 +78,8 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		c,
 		dto.AuthJwt{
 			Token: dto.AuthJwtResponse{
-				Auth:    tokenAuth,
-				Refresh: "",
+				Access:  accessToken,
+				Refresh: refreshToken,
 			},
 		},
 	)
