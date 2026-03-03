@@ -1,6 +1,7 @@
 package tokenutil
 
 import (
+	"errors"
 	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/config"
@@ -41,4 +42,25 @@ func GenerateRefreshToken(userID string, expired time.Duration) (string, error) 
 	}
 
 	return signed, nil
+}
+
+func ClaimsAccessToken(tokenJwt string) (*ClaimsAccessJWT, error) {
+	token, err := jwt.ParseWithClaims(tokenJwt, &ClaimsAccessJWT{}, func(t *jwt.Token) (any, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+
+		return []byte(config.AppConfig.JwtAccessSecret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*ClaimsAccessJWT)
+	if !ok {
+		return nil, errors.New("invalid token")
+	}
+
+	return claims, nil
 }

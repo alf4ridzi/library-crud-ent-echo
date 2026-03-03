@@ -116,5 +116,23 @@ func (h *AuthHandler) Register(c *echo.Context) error {
 }
 
 func (h *AuthHandler) Refresh(c *echo.Context) error {
+	req := new(dto.RefreshRequest)
+
+	if err := c.Bind(req); err != nil {
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
+	}
+
+	if err := c.Validate(req); err != nil {
+		return response.Fail(
+			c,
+			http.StatusBadRequest,
+			response.ValidationErrors(err),
+		)
+	}
+
 	return nil
 }
