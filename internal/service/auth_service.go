@@ -11,7 +11,7 @@ import (
 )
 
 type AuthService interface {
-	Login(ctx context.Context, req *dto.LoginRequest) (*dto.UserResponse, error)
+	Login(ctx context.Context, req *dto.LoginRequest) (*ent.User, error)
 	Register(ctx context.Context, reg *dto.RegisterRequest) error
 }
 
@@ -23,7 +23,7 @@ func NewAuthService(userRepo repository.UserRepository) AuthService {
 	return &authServiceImpl{userRepo: userRepo}
 }
 
-func (s *authServiceImpl) Login(ctx context.Context, req *dto.LoginRequest) (*dto.UserResponse, error) {
+func (s *authServiceImpl) Login(ctx context.Context, req *dto.LoginRequest) (*ent.User, error) {
 	var user *ent.User
 	var err error
 
@@ -41,13 +41,7 @@ func (s *authServiceImpl) Login(ctx context.Context, req *dto.LoginRequest) (*dt
 		return nil, ErrInvalidCredentials
 	}
 
-	userRespons := &dto.UserResponse{
-		Username: user.Username,
-		Email:    user.Email,
-		Name:     *user.Name,
-	}
-
-	return userRespons, nil
+	return user, nil
 }
 
 func (s *authServiceImpl) Register(ctx context.Context, reg *dto.RegisterRequest) error {

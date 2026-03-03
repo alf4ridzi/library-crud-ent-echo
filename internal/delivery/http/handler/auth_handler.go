@@ -3,11 +3,14 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/response"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/helpers"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/pkg/tokenutil"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
 )
@@ -51,9 +54,25 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		}
 	}
 
+	userID := strconv.Itoa(user.ID)
+
+	tokenAuth, err := tokenutil.GenerateAuthToken(userID, time.Duration(1)*time.Hour)
+	if err != nil {
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
+	}
+
 	return response.Success(
 		c,
-		user,
+		dto.AuthJwt{
+			Token: dto.AuthJwtResponse{
+				Auth:    tokenAuth,
+				Refresh: "",
+			},
+		},
 	)
 }
 
