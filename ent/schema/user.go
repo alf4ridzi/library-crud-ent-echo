@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
@@ -18,10 +19,13 @@ type User struct {
 
 func (User) Fields() []ent.Field {
 	return []ent.Field{
+		field.Uint("id").Positive(),
 		field.String("name").Nillable(),
 		field.String("email").Unique(),
 		field.String("username").Unique(),
 		field.String("password"),
+		field.Time("created_at").Default(time.Now),
+		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
 }
 

@@ -12,6 +12,7 @@ type UserRepository interface {
 	FindByEmail(ctx context.Context, email string) (*ent.User, error)
 	FindByUsername(ctx context.Context, username string) (*ent.User, error)
 	FindByUsernameOrEmail(ctx context.Context, username *string, email *string) (*ent.User, error)
+	FindByID(ctx context.Context, id uint) (*ent.User, error)
 	Create(ctx context.Context, user *ent.User) error
 }
 
@@ -21,6 +22,10 @@ type userRepositoryImpl struct {
 
 func NewUserRepository(client *ent.Client) UserRepository {
 	return &userRepositoryImpl{DB: client}
+}
+
+func (r *userRepositoryImpl) FindByID(ctx context.Context, id uint) (*ent.User, error) {
+	return r.DB.User.Get(ctx, id)
 }
 
 func (r *userRepositoryImpl) FindByEmail(ctx context.Context, email string) (*ent.User, error) {

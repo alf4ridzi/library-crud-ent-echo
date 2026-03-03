@@ -7,20 +7,23 @@ import (
 
 type Routes struct {
 	AuthRoute *AuthRoute
+	UserRoute *UserRoute
 }
 
 func NewRoutes(
 	authRoute *AuthRoute,
+	userRoute *UserRoute,
 ) *Routes {
 	return &Routes{
 		AuthRoute: authRoute,
+		UserRoute: userRoute,
 	}
 }
 
 func (r *Routes) Register(router *echo.Echo) {
 	api := router.Group("/api")
 
-	api.Use(middleware.JwtAuth)
-
 	r.AuthRoute.Register(api)
+	api.Use(middleware.JwtAuth)
+	r.UserRoute.Register(api)
 }

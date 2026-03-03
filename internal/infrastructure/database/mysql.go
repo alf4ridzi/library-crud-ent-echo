@@ -10,7 +10,7 @@ import (
 )
 
 func NewMysqlEnt() (*ent.Client, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True",
 		config.AppConfig.DBUserName,
 		config.AppConfig.DBPassword,
 		config.AppConfig.DBHost,

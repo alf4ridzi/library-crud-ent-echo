@@ -65,11 +65,17 @@ func main() {
 	e.Use(middleware.TimeoutMiddleware)
 
 	userRepo := repository.NewUserRepository(client)
+
 	authService := service.NewAuthService(userRepo)
 	authHandler := handler.NewAuthHandler(authService)
 	authRoute := routes.NewAuthRoute(authHandler)
 
-	r := routes.NewRoutes(authRoute)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
+	userRoute := routes.NewUserRoute(userHandler)
+
+	r := routes.NewRoutes(authRoute, userRoute)
+
 	r.Register(e)
 
 	startServer(e)

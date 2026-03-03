@@ -11,9 +11,9 @@ import (
 
 func JwtAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {
-		authorization := c.Request().Header.Get("Authorization")
+		authHeader := c.Request().Header.Get("Authorization")
 
-		if authorization == "" {
+		if authHeader == "" {
 			return response.Fail(
 				c,
 				http.StatusUnauthorized,
@@ -21,16 +21,14 @@ func JwtAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			)
 		}
 
-		authSplit := strings.Split(authorization, "Bearer")
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
-		token := authSplit[1]
-
-		claims, err := tokenutil.ClaimsAccessToken(token)
+		claims, err := tokenutil.ClaimsAccessToken(tokenString)
 		if err != nil {
 			return response.Fail(
 				c,
 				http.StatusUnauthorized,
-				err.Error(),
+				response.Message(err.Error()),
 			)
 		}
 

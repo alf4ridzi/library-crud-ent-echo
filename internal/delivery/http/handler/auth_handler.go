@@ -44,6 +44,7 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 
 	user, err := h.authService.Login(c.Request().Context(), req)
 	if err != nil {
+		c.Logger().Error(err.Error())
 		switch {
 		case errors.Is(err, service.ErrInvalidCredentials):
 			return response.Fail(
@@ -54,7 +55,15 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		}
 	}
 
-	userID := strconv.Itoa(user.ID)
+	if err != nil {
+		return response.Fail(
+			c,
+			http.StatusNotFound,
+			response.Message("user not found"),
+		)
+	}
+
+	userID := strconv.FormatUint(uint64(user.ID), 10)
 
 	accessToken, err := tokenutil.GenerateAccessToken(userID, time.Duration(1)*time.Hour)
 	if err != nil {
