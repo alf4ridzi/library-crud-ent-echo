@@ -143,5 +143,32 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 		)
 	}
 
-	return nil
+	claims, err := tokenutil.ClaimsRefreshToken(req.Token)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	accessToken, err := tokenutil.GenerateAccessToken(claims.Subject, time.Duration(1)*time.Hour)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	return response.Success(
+		c,
+		dto.AuthJwt{
+			Token: dto.AuthJwtResponse{
+				Access: accessToken,
+			},
+		},
+	)
 }
