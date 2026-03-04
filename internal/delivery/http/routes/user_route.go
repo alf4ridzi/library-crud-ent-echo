@@ -18,4 +18,5 @@ func NewUserRoute(handler *handler.UserHandler) *UserRoute {
 func (r *UserRoute) Register(rg *echo.Group) {
 	users := rg.Group("/users")
 	users.GET("/me", r.Handler.GetMe)
+	users.PATCH("/me", r.Handler.UpdateUser)
 }
