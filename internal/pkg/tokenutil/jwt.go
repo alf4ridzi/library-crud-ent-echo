@@ -13,6 +13,7 @@ func GenerateAccessToken(userID string, expired time.Duration) (string, error) {
 		jwt.RegisteredClaims{
 			Subject:   userID,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expired)),
+			Issuer:    config.AppConfig.AppName,
 		},
 	}
 
@@ -31,6 +32,7 @@ func GenerateRefreshToken(userID string, expired time.Duration) (string, error) 
 		jwt.RegisteredClaims{
 			Subject:   userID,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expired)),
+			Issuer:    config.AppConfig.AppName,
 		},
 	}
 

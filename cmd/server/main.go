@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +27,7 @@ func startServer(e *echo.Echo) {
 	defer stop()
 
 	s := http.Server{
-		Addr:    ":8080",
+		Addr:    fmt.Sprintf(":%d", config.AppConfig.AppPort),
 		Handler: e,
 	}
 

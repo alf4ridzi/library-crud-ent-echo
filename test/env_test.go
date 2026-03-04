@@ -11,6 +11,6 @@ func TestEnv(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Log(config.AppConfig.DBHost)
-	t.Log(config.AppConfig.DBName)
+	t.Log(config.AppConfig.AppName)
+	t.Log(config.AppConfig.AppPort)
 }

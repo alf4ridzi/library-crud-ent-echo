@@ -5,13 +5,19 @@ import (
 )
 
 type env struct {
-	MysqlConfigEnv `mapstructure:",squash"` // Gunakan squash untuk struct bersarang
-	JwtConfigEnv   `mapstructure:",squash"`
+	MysqlConfigEnv  `mapstructure:",squash"` // Gunakan squash untuk struct bersarang
+	JwtConfigEnv    `mapstructure:",squash"`
+	ServerConfigEnv `mapstructure:",squash"`
 }
 
 var (
 	AppConfig *env
 )
+
+type ServerConfigEnv struct {
+	AppName string `mapstructure:"APP_NAME"`
+	AppPort int    `mapstructure:"APP_PORT"`
+}
 
 type MysqlConfigEnv struct {
 	DBHost     string `mapstructure:"MYSQL_DB_HOST"`
