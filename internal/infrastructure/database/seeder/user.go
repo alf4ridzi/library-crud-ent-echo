@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
-	"github.com/alf4ridzi/library-crud-ent-echo/internal/pkg/cryptoutil"
 	"github.com/go-faker/faker/v4"
 )
 
@@ -15,7 +14,7 @@ func UserSeeds(client *ent.Client) {
 			SetEmail(faker.Email()).
 			SetUsername(faker.Username()).
 			SetName(faker.Name()).
-			SetPassword(cryptoutil.HashPassword("user12345")).
+			SetPassword("user12345").
 			Save(context.Background())
 
 		if err != nil {
