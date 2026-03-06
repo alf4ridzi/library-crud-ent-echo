@@ -59,9 +59,11 @@ func (s *userServiceImpl) UpdateUser(ctx context.Context, id any, req *dto.UserU
 	}
 
 	userResponse := &dto.UserResponse{
-		Name:     *user.Name,
-		Email:    user.Email,
-		Username: user.Username,
+		Name:      *user.Name,
+		Email:     user.Email,
+		Username:  user.Username,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
 
 	return userResponse, nil
