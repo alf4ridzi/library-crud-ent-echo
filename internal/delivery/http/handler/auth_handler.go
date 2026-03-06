@@ -52,6 +52,12 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 				http.StatusUnauthorized,
 				response.Message(err.Error()),
 			)
+		case ent.IsNotFound(err):
+			return response.Fail(
+				c,
+				http.StatusUnauthorized,
+				response.Message(service.ErrInvalidCredentials.Error()),
+			)
 		default:
 			return response.Error(
 				c,
