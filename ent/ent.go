@@ -12,6 +12,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
@@ -73,7 +76,10 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			user.Table: user.ValidColumn,
+			books.Table:      books.ValidColumn,
+			borrowings.Table: borrowings.ValidColumn,
+			categories.Table: categories.ValidColumn,
+			user.Table:       user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

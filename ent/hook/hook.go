@@ -9,6 +9,42 @@ import (
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 )
 
+// The BooksFunc type is an adapter to allow the use of ordinary
+// function as Books mutator.
+type BooksFunc func(context.Context, *ent.BooksMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BooksFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BooksMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BooksMutation", m)
+}
+
+// The BorrowingsFunc type is an adapter to allow the use of ordinary
+// function as Borrowings mutator.
+type BorrowingsFunc func(context.Context, *ent.BorrowingsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BorrowingsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BorrowingsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BorrowingsMutation", m)
+}
+
+// The CategoriesFunc type is an adapter to allow the use of ordinary
+// function as Categories mutator.
+type CategoriesFunc func(context.Context, *ent.CategoriesMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CategoriesFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CategoriesMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CategoriesMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)
