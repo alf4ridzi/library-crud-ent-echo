@@ -37,6 +37,10 @@ func (s *authServiceImpl) Login(ctx context.Context, req *dto.LoginRequest) (*en
 		return nil, err
 	}
 
+	if user == nil {
+		return nil, ErrInvalidCredentials
+	}
+
 	if !cryptoutil.ValidatePassword(user.Password, req.Password) {
 		return nil, ErrInvalidCredentials
 	}

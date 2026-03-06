@@ -52,15 +52,13 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 				http.StatusUnauthorized,
 				response.Message(err.Error()),
 			)
+		default:
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
 		}
-	}
-
-	if err != nil {
-		return response.Fail(
-			c,
-			http.StatusNotFound,
-			response.Message("user not found"),
-		)
 	}
 
 	userID := strconv.FormatUint(uint64(user.ID), 10)
