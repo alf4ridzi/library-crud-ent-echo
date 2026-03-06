@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -13,10 +14,58 @@ import (
 
 // Books is the model entity for the Books schema.
 type Books struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID uint `json:"id,omitempty"`
+	// Author holds the value of the "author" field.
+	Author string `json:"author,omitempty"`
+	// Description holds the value of the "description" field.
+	Description string `json:"description,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
+	// Quantity holds the value of the "quantity" field.
+	Quantity int `json:"quantity,omitempty"`
+	// AvailableQuantity holds the value of the "available_quantity" field.
+	AvailableQuantity int `json:"available_quantity,omitempty"`
+	// PublisDate holds the value of the "publis_date" field.
+	PublisDate time.Time `json:"publis_date,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the BooksQuery when eager-loading is set.
+	Edges        BooksEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// BooksEdges holds the relations/edges for other nodes in the graph.
+type BooksEdges struct {
+	// Borrowings holds the value of the borrowings edge.
+	Borrowings []*Borrowings `json:"borrowings,omitempty"`
+	// Categories holds the value of the categories edge.
+	Categories []*Categories `json:"categories,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// BorrowingsOrErr returns the Borrowings value or an error if the edge
+// was not loaded in eager-loading.
+func (e BooksEdges) BorrowingsOrErr() ([]*Borrowings, error) {
+	if e.loadedTypes[0] {
+		return e.Borrowings, nil
+	}
+	return nil, &NotLoadedError{edge: "borrowings"}
+}
+
+// CategoriesOrErr returns the Categories value or an error if the edge
+// was not loaded in eager-loading.
+func (e BooksEdges) CategoriesOrErr() ([]*Categories, error) {
+	if e.loadedTypes[1] {
+		return e.Categories, nil
+	}
+	return nil, &NotLoadedError{edge: "categories"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,8 +73,12 @@ func (*Books) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case books.FieldID:
+		case books.FieldID, books.FieldQuantity, books.FieldAvailableQuantity:
 			values[i] = new(sql.NullInt64)
+		case books.FieldAuthor, books.FieldDescription, books.FieldTitle:
+			values[i] = new(sql.NullString)
+		case books.FieldPublisDate, books.FieldCreatedAt, books.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -46,7 +99,55 @@ func (_m *Books) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = uint(value.Int64)
+		case books.FieldAuthor:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field author", values[i])
+			} else if value.Valid {
+				_m.Author = value.String
+			}
+		case books.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
+			}
+		case books.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				_m.Title = value.String
+			}
+		case books.FieldQuantity:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field quantity", values[i])
+			} else if value.Valid {
+				_m.Quantity = int(value.Int64)
+			}
+		case books.FieldAvailableQuantity:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field available_quantity", values[i])
+			} else if value.Valid {
+				_m.AvailableQuantity = int(value.Int64)
+			}
+		case books.FieldPublisDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field publis_date", values[i])
+			} else if value.Valid {
+				_m.PublisDate = value.Time
+			}
+		case books.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case books.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +159,16 @@ func (_m *Books) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Books) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryBorrowings queries the "borrowings" edge of the Books entity.
+func (_m *Books) QueryBorrowings() *BorrowingsQuery {
+	return NewBooksClient(_m.config).QueryBorrowings(_m)
+}
+
+// QueryCategories queries the "categories" edge of the Books entity.
+func (_m *Books) QueryCategories() *CategoriesQuery {
+	return NewBooksClient(_m.config).QueryCategories(_m)
 }
 
 // Update returns a builder for updating this Books.
@@ -82,7 +193,30 @@ func (_m *Books) Unwrap() *Books {
 func (_m *Books) String() string {
 	var builder strings.Builder
 	builder.WriteString("Books(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("author=")
+	builder.WriteString(_m.Author)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
+	builder.WriteString(", ")
+	builder.WriteString("title=")
+	builder.WriteString(_m.Title)
+	builder.WriteString(", ")
+	builder.WriteString("quantity=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Quantity))
+	builder.WriteString(", ")
+	builder.WriteString("available_quantity=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AvailableQuantity))
+	builder.WriteString(", ")
+	builder.WriteString("publis_date=")
+	builder.WriteString(_m.PublisDate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

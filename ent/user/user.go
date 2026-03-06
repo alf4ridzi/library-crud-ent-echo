@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -26,8 +27,17 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// EdgeBorrowings holds the string denoting the borrowings edge name in mutations.
+	EdgeBorrowings = "borrowings"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// BorrowingsTable is the table that holds the borrowings relation/edge.
+	BorrowingsTable = "borrowings"
+	// BorrowingsInverseTable is the table name for the Borrowings entity.
+	// It exists in this package in order to avoid circular dependency with the "borrowings" package.
+	BorrowingsInverseTable = "borrowings"
+	// BorrowingsColumn is the table column denoting the borrowings relation/edge.
+	BorrowingsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -104,4 +114,25 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByBorrowingsCount orders the results by borrowings count.
+func ByBorrowingsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBorrowingsStep(), opts...)
+	}
+}
+
+// ByBorrowings orders the results by borrowings terms.
+func ByBorrowings(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBorrowingsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newBorrowingsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BorrowingsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, BorrowingsTable, BorrowingsColumn),
+	)
 }

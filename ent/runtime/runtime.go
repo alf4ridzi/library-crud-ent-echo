@@ -5,6 +5,7 @@ package runtime
 import (
 	"time"
 
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/schema"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
@@ -13,6 +14,18 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	booksFields := schema.Books{}.Fields()
+	_ = booksFields
+	// booksDescCreatedAt is the schema descriptor for created_at field.
+	booksDescCreatedAt := booksFields[7].Descriptor()
+	// books.DefaultCreatedAt holds the default value on creation for the created_at field.
+	books.DefaultCreatedAt = booksDescCreatedAt.Default.(func() time.Time)
+	// booksDescUpdatedAt is the schema descriptor for updated_at field.
+	booksDescUpdatedAt := booksFields[8].Descriptor()
+	// books.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	books.DefaultUpdatedAt = booksDescUpdatedAt.Default.(func() time.Time)
+	// books.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	books.UpdateDefaultUpdatedAt = booksDescUpdatedAt.UpdateDefault.(func() time.Time)
 	userHooks := schema.User{}.Hooks()
 	user.Hooks[0] = userHooks[0]
 	userFields := schema.User{}.Fields()

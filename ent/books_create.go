@@ -4,11 +4,15 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 )
 
 // BooksCreate is the builder for creating a Books entity.
@@ -18,6 +22,106 @@ type BooksCreate struct {
 	hooks    []Hook
 }
 
+// SetAuthor sets the "author" field.
+func (_c *BooksCreate) SetAuthor(v string) *BooksCreate {
+	_c.mutation.SetAuthor(v)
+	return _c
+}
+
+// SetDescription sets the "description" field.
+func (_c *BooksCreate) SetDescription(v string) *BooksCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetTitle sets the "title" field.
+func (_c *BooksCreate) SetTitle(v string) *BooksCreate {
+	_c.mutation.SetTitle(v)
+	return _c
+}
+
+// SetQuantity sets the "quantity" field.
+func (_c *BooksCreate) SetQuantity(v int) *BooksCreate {
+	_c.mutation.SetQuantity(v)
+	return _c
+}
+
+// SetAvailableQuantity sets the "available_quantity" field.
+func (_c *BooksCreate) SetAvailableQuantity(v int) *BooksCreate {
+	_c.mutation.SetAvailableQuantity(v)
+	return _c
+}
+
+// SetPublisDate sets the "publis_date" field.
+func (_c *BooksCreate) SetPublisDate(v time.Time) *BooksCreate {
+	_c.mutation.SetPublisDate(v)
+	return _c
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *BooksCreate) SetCreatedAt(v time.Time) *BooksCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *BooksCreate) SetNillableCreatedAt(v *time.Time) *BooksCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *BooksCreate) SetUpdatedAt(v time.Time) *BooksCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *BooksCreate) SetNillableUpdatedAt(v *time.Time) *BooksCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
+// SetID sets the "id" field.
+func (_c *BooksCreate) SetID(v uint) *BooksCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
+// AddBorrowingIDs adds the "borrowings" edge to the Borrowings entity by IDs.
+func (_c *BooksCreate) AddBorrowingIDs(ids ...int) *BooksCreate {
+	_c.mutation.AddBorrowingIDs(ids...)
+	return _c
+}
+
+// AddBorrowings adds the "borrowings" edges to the Borrowings entity.
+func (_c *BooksCreate) AddBorrowings(v ...*Borrowings) *BooksCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddBorrowingIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Categories entity by IDs.
+func (_c *BooksCreate) AddCategoryIDs(ids ...uint) *BooksCreate {
+	_c.mutation.AddCategoryIDs(ids...)
+	return _c
+}
+
+// AddCategories adds the "categories" edges to the Categories entity.
+func (_c *BooksCreate) AddCategories(v ...*Categories) *BooksCreate {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the BooksMutation object of the builder.
 func (_c *BooksCreate) Mutation() *BooksMutation {
 	return _c.mutation
@@ -25,6 +129,7 @@ func (_c *BooksCreate) Mutation() *BooksMutation {
 
 // Save creates the Books in the database.
 func (_c *BooksCreate) Save(ctx context.Context) (*Books, error) {
+	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -50,8 +155,44 @@ func (_c *BooksCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_c *BooksCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := books.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := books.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (_c *BooksCreate) check() error {
+	if _, ok := _c.mutation.Author(); !ok {
+		return &ValidationError{Name: "author", err: errors.New(`ent: missing required field "Books.author"`)}
+	}
+	if _, ok := _c.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Books.description"`)}
+	}
+	if _, ok := _c.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Books.title"`)}
+	}
+	if _, ok := _c.mutation.Quantity(); !ok {
+		return &ValidationError{Name: "quantity", err: errors.New(`ent: missing required field "Books.quantity"`)}
+	}
+	if _, ok := _c.mutation.AvailableQuantity(); !ok {
+		return &ValidationError{Name: "available_quantity", err: errors.New(`ent: missing required field "Books.available_quantity"`)}
+	}
+	if _, ok := _c.mutation.PublisDate(); !ok {
+		return &ValidationError{Name: "publis_date", err: errors.New(`ent: missing required field "Books.publis_date"`)}
+	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Books.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Books.updated_at"`)}
+	}
 	return nil
 }
 
@@ -66,8 +207,10 @@ func (_c *BooksCreate) sqlSave(ctx context.Context) (*Books, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -76,8 +219,76 @@ func (_c *BooksCreate) sqlSave(ctx context.Context) (*Books, error) {
 func (_c *BooksCreate) createSpec() (*Books, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Books{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(books.Table, sqlgraph.NewFieldSpec(books.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(books.Table, sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.Author(); ok {
+		_spec.SetField(books.FieldAuthor, field.TypeString, value)
+		_node.Author = value
+	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(books.FieldDescription, field.TypeString, value)
+		_node.Description = value
+	}
+	if value, ok := _c.mutation.Title(); ok {
+		_spec.SetField(books.FieldTitle, field.TypeString, value)
+		_node.Title = value
+	}
+	if value, ok := _c.mutation.Quantity(); ok {
+		_spec.SetField(books.FieldQuantity, field.TypeInt, value)
+		_node.Quantity = value
+	}
+	if value, ok := _c.mutation.AvailableQuantity(); ok {
+		_spec.SetField(books.FieldAvailableQuantity, field.TypeInt, value)
+		_node.AvailableQuantity = value
+	}
+	if value, ok := _c.mutation.PublisDate(); ok {
+		_spec.SetField(books.FieldPublisDate, field.TypeTime, value)
+		_node.PublisDate = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(books.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(books.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if nodes := _c.mutation.BorrowingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -99,6 +310,7 @@ func (_c *BooksCreateBulk) Save(ctx context.Context) ([]*Books, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*BooksMutation)
 				if !ok {
@@ -125,9 +337,9 @@ func (_c *BooksCreateBulk) Save(ctx context.Context) ([]*Books, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = uint(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

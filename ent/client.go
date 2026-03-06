@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
@@ -287,7 +288,7 @@ func (c *BooksClient) UpdateOne(_m *Books) *BooksUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *BooksClient) UpdateOneID(id int) *BooksUpdateOne {
+func (c *BooksClient) UpdateOneID(id uint) *BooksUpdateOne {
 	mutation := newBooksMutation(c.config, OpUpdateOne, withBooksID(id))
 	return &BooksUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -304,7 +305,7 @@ func (c *BooksClient) DeleteOne(_m *Books) *BooksDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *BooksClient) DeleteOneID(id int) *BooksDeleteOne {
+func (c *BooksClient) DeleteOneID(id uint) *BooksDeleteOne {
 	builder := c.Delete().Where(books.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -321,17 +322,49 @@ func (c *BooksClient) Query() *BooksQuery {
 }
 
 // Get returns a Books entity by its id.
-func (c *BooksClient) Get(ctx context.Context, id int) (*Books, error) {
+func (c *BooksClient) Get(ctx context.Context, id uint) (*Books, error) {
 	return c.Query().Where(books.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *BooksClient) GetX(ctx context.Context, id int) *Books {
+func (c *BooksClient) GetX(ctx context.Context, id uint) *Books {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryBorrowings queries the borrowings edge of a Books.
+func (c *BooksClient) QueryBorrowings(_m *Books) *BorrowingsQuery {
+	query := (&BorrowingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(books.Table, books.FieldID, id),
+			sqlgraph.To(borrowings.Table, borrowings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, books.BorrowingsTable, books.BorrowingsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCategories queries the categories edge of a Books.
+func (c *BooksClient) QueryCategories(_m *Books) *CategoriesQuery {
+	query := (&CategoriesClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(books.Table, books.FieldID, id),
+			sqlgraph.To(categories.Table, categories.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, books.CategoriesTable, books.CategoriesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -467,6 +500,38 @@ func (c *BorrowingsClient) GetX(ctx context.Context, id int) *Borrowings {
 	return obj
 }
 
+// QueryUser queries the user edge of a Borrowings.
+func (c *BorrowingsClient) QueryUser(_m *Borrowings) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(borrowings.Table, borrowings.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, borrowings.UserTable, borrowings.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBook queries the book edge of a Borrowings.
+func (c *BorrowingsClient) QueryBook(_m *Borrowings) *BooksQuery {
+	query := (&BooksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(borrowings.Table, borrowings.FieldID, id),
+			sqlgraph.To(books.Table, books.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, borrowings.BookTable, borrowings.BookColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *BorrowingsClient) Hooks() []Hook {
 	return c.hooks.Borrowings
@@ -553,7 +618,7 @@ func (c *CategoriesClient) UpdateOne(_m *Categories) *CategoriesUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CategoriesClient) UpdateOneID(id int) *CategoriesUpdateOne {
+func (c *CategoriesClient) UpdateOneID(id uint) *CategoriesUpdateOne {
 	mutation := newCategoriesMutation(c.config, OpUpdateOne, withCategoriesID(id))
 	return &CategoriesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -570,7 +635,7 @@ func (c *CategoriesClient) DeleteOne(_m *Categories) *CategoriesDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *CategoriesClient) DeleteOneID(id int) *CategoriesDeleteOne {
+func (c *CategoriesClient) DeleteOneID(id uint) *CategoriesDeleteOne {
 	builder := c.Delete().Where(categories.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -587,17 +652,33 @@ func (c *CategoriesClient) Query() *CategoriesQuery {
 }
 
 // Get returns a Categories entity by its id.
-func (c *CategoriesClient) Get(ctx context.Context, id int) (*Categories, error) {
+func (c *CategoriesClient) Get(ctx context.Context, id uint) (*Categories, error) {
 	return c.Query().Where(categories.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CategoriesClient) GetX(ctx context.Context, id int) *Categories {
+func (c *CategoriesClient) GetX(ctx context.Context, id uint) *Categories {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryBooks queries the books edge of a Categories.
+func (c *CategoriesClient) QueryBooks(_m *Categories) *BooksQuery {
+	query := (&BooksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(categories.Table, categories.FieldID, id),
+			sqlgraph.To(books.Table, books.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, categories.BooksTable, categories.BooksPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -731,6 +812,22 @@ func (c *UserClient) GetX(ctx context.Context, id uint) *User {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryBorrowings queries the borrowings edge of a User.
+func (c *UserClient) QueryBorrowings(_m *User) *BorrowingsQuery {
+	query := (&BorrowingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(borrowings.Table, borrowings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.BorrowingsTable, user.BorrowingsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

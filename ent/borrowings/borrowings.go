@@ -4,6 +4,7 @@ package borrowings
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,13 +12,43 @@ const (
 	Label = "borrowings"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldBookID holds the string denoting the book_id field in the database.
+	FieldBookID = "book_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// FieldReleaseDate holds the string denoting the release_date field in the database.
+	FieldReleaseDate = "release_date"
+	// FieldDueDate holds the string denoting the due_date field in the database.
+	FieldDueDate = "due_date"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
+	// EdgeBook holds the string denoting the book edge name in mutations.
+	EdgeBook = "book"
 	// Table holds the table name of the borrowings in the database.
 	Table = "borrowings"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "borrowings"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
+	// BookTable is the table that holds the book relation/edge.
+	BookTable = "borrowings"
+	// BookInverseTable is the table name for the Books entity.
+	// It exists in this package in order to avoid circular dependency with the "books" package.
+	BookInverseTable = "books"
+	// BookColumn is the table column denoting the book relation/edge.
+	BookColumn = "book_id"
 )
 
 // Columns holds all SQL columns for borrowings fields.
 var Columns = []string{
 	FieldID,
+	FieldBookID,
+	FieldUserID,
+	FieldReleaseDate,
+	FieldDueDate,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -36,4 +67,52 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByBookID orders the results by the book_id field.
+func ByBookID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBookID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByReleaseDate orders the results by the release_date field.
+func ByReleaseDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReleaseDate, opts...).ToFunc()
+}
+
+// ByDueDate orders the results by the due_date field.
+func ByDueDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDueDate, opts...).ToFunc()
+}
+
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByBookField orders the results by book field.
+func ByBookField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBookStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+	)
+}
+func newBookStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BookInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, BookTable, BookColumn),
+	)
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
 )
 
@@ -422,6 +423,29 @@ func UpdatedAtLT(v time.Time) predicate.User {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// HasBorrowings applies the HasEdge predicate on the "borrowings" edge.
+func HasBorrowings() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, BorrowingsTable, BorrowingsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasBorrowingsWith applies the HasEdge predicate on the "borrowings" edge with a given conditions (other predicates).
+func HasBorrowingsWith(preds ...predicate.Borrowings) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newBorrowingsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

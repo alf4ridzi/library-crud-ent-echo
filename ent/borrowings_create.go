@@ -4,11 +4,15 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
 // BorrowingsCreate is the builder for creating a Borrowings entity.
@@ -16,6 +20,40 @@ type BorrowingsCreate struct {
 	config
 	mutation *BorrowingsMutation
 	hooks    []Hook
+}
+
+// SetBookID sets the "book_id" field.
+func (_c *BorrowingsCreate) SetBookID(v uint) *BorrowingsCreate {
+	_c.mutation.SetBookID(v)
+	return _c
+}
+
+// SetUserID sets the "user_id" field.
+func (_c *BorrowingsCreate) SetUserID(v uint) *BorrowingsCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetReleaseDate sets the "release_date" field.
+func (_c *BorrowingsCreate) SetReleaseDate(v time.Time) *BorrowingsCreate {
+	_c.mutation.SetReleaseDate(v)
+	return _c
+}
+
+// SetDueDate sets the "due_date" field.
+func (_c *BorrowingsCreate) SetDueDate(v time.Time) *BorrowingsCreate {
+	_c.mutation.SetDueDate(v)
+	return _c
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_c *BorrowingsCreate) SetUser(v *User) *BorrowingsCreate {
+	return _c.SetUserID(v.ID)
+}
+
+// SetBook sets the "book" edge to the Books entity.
+func (_c *BorrowingsCreate) SetBook(v *Books) *BorrowingsCreate {
+	return _c.SetBookID(v.ID)
 }
 
 // Mutation returns the BorrowingsMutation object of the builder.
@@ -52,6 +90,24 @@ func (_c *BorrowingsCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *BorrowingsCreate) check() error {
+	if _, ok := _c.mutation.BookID(); !ok {
+		return &ValidationError{Name: "book_id", err: errors.New(`ent: missing required field "Borrowings.book_id"`)}
+	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Borrowings.user_id"`)}
+	}
+	if _, ok := _c.mutation.ReleaseDate(); !ok {
+		return &ValidationError{Name: "release_date", err: errors.New(`ent: missing required field "Borrowings.release_date"`)}
+	}
+	if _, ok := _c.mutation.DueDate(); !ok {
+		return &ValidationError{Name: "due_date", err: errors.New(`ent: missing required field "Borrowings.due_date"`)}
+	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Borrowings.user"`)}
+	}
+	if len(_c.mutation.BookIDs()) == 0 {
+		return &ValidationError{Name: "book", err: errors.New(`ent: missing required edge "Borrowings.book"`)}
+	}
 	return nil
 }
 
@@ -78,6 +134,48 @@ func (_c *BorrowingsCreate) createSpec() (*Borrowings, *sqlgraph.CreateSpec) {
 		_node = &Borrowings{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(borrowings.Table, sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt))
 	)
+	if value, ok := _c.mutation.ReleaseDate(); ok {
+		_spec.SetField(borrowings.FieldReleaseDate, field.TypeTime, value)
+		_node.ReleaseDate = value
+	}
+	if value, ok := _c.mutation.DueDate(); ok {
+		_spec.SetField(borrowings.FieldDueDate, field.TypeTime, value)
+		_node.DueDate = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.UserTable,
+			Columns: []string{borrowings.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.BookIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.BookTable,
+			Columns: []string{borrowings.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.BookID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 

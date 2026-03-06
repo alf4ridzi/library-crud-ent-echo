@@ -5,18 +5,65 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
 // Borrowings is the model entity for the Borrowings schema.
 type Borrowings struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// BookID holds the value of the "book_id" field.
+	BookID uint `json:"book_id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uint `json:"user_id,omitempty"`
+	// ReleaseDate holds the value of the "release_date" field.
+	ReleaseDate time.Time `json:"release_date,omitempty"`
+	// DueDate holds the value of the "due_date" field.
+	DueDate time.Time `json:"due_date,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the BorrowingsQuery when eager-loading is set.
+	Edges        BorrowingsEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// BorrowingsEdges holds the relations/edges for other nodes in the graph.
+type BorrowingsEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// Book holds the value of the book edge.
+	Book *Books `json:"book,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BorrowingsEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
+// BookOrErr returns the Book value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BorrowingsEdges) BookOrErr() (*Books, error) {
+	if e.Book != nil {
+		return e.Book, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: books.Label}
+	}
+	return nil, &NotLoadedError{edge: "book"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,8 +71,10 @@ func (*Borrowings) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case borrowings.FieldID:
+		case borrowings.FieldID, borrowings.FieldBookID, borrowings.FieldUserID:
 			values[i] = new(sql.NullInt64)
+		case borrowings.FieldReleaseDate, borrowings.FieldDueDate:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +96,30 @@ func (_m *Borrowings) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case borrowings.FieldBookID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field book_id", values[i])
+			} else if value.Valid {
+				_m.BookID = uint(value.Int64)
+			}
+		case borrowings.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = uint(value.Int64)
+			}
+		case borrowings.FieldReleaseDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field release_date", values[i])
+			} else if value.Valid {
+				_m.ReleaseDate = value.Time
+			}
+		case borrowings.FieldDueDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field due_date", values[i])
+			} else if value.Valid {
+				_m.DueDate = value.Time
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +131,16 @@ func (_m *Borrowings) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Borrowings) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the Borrowings entity.
+func (_m *Borrowings) QueryUser() *UserQuery {
+	return NewBorrowingsClient(_m.config).QueryUser(_m)
+}
+
+// QueryBook queries the "book" edge of the Borrowings entity.
+func (_m *Borrowings) QueryBook() *BooksQuery {
+	return NewBorrowingsClient(_m.config).QueryBook(_m)
 }
 
 // Update returns a builder for updating this Borrowings.
@@ -82,7 +165,18 @@ func (_m *Borrowings) Unwrap() *Borrowings {
 func (_m *Borrowings) String() string {
 	var builder strings.Builder
 	builder.WriteString("Borrowings(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("book_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BookID))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("release_date=")
+	builder.WriteString(_m.ReleaseDate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("due_date=")
+	builder.WriteString(_m.DueDate.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

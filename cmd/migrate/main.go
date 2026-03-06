@@ -16,5 +16,7 @@ func main() {
 		log.Fatalf("failed create client : %v", client)
 	}
 
+	defer client.Close()
+
 	migrate.Run(client)
 }

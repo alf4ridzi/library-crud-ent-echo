@@ -3,7 +3,10 @@
 package books
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,14 +14,60 @@ const (
 	Label = "books"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldAuthor holds the string denoting the author field in the database.
+	FieldAuthor = "author"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
+	// FieldQuantity holds the string denoting the quantity field in the database.
+	FieldQuantity = "quantity"
+	// FieldAvailableQuantity holds the string denoting the available_quantity field in the database.
+	FieldAvailableQuantity = "available_quantity"
+	// FieldPublisDate holds the string denoting the publis_date field in the database.
+	FieldPublisDate = "publis_date"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// EdgeBorrowings holds the string denoting the borrowings edge name in mutations.
+	EdgeBorrowings = "borrowings"
+	// EdgeCategories holds the string denoting the categories edge name in mutations.
+	EdgeCategories = "categories"
 	// Table holds the table name of the books in the database.
 	Table = "books"
+	// BorrowingsTable is the table that holds the borrowings relation/edge.
+	BorrowingsTable = "borrowings"
+	// BorrowingsInverseTable is the table name for the Borrowings entity.
+	// It exists in this package in order to avoid circular dependency with the "borrowings" package.
+	BorrowingsInverseTable = "borrowings"
+	// BorrowingsColumn is the table column denoting the borrowings relation/edge.
+	BorrowingsColumn = "book_id"
+	// CategoriesTable is the table that holds the categories relation/edge. The primary key declared below.
+	CategoriesTable = "books_categories"
+	// CategoriesInverseTable is the table name for the Categories entity.
+	// It exists in this package in order to avoid circular dependency with the "categories" package.
+	CategoriesInverseTable = "categories"
 )
 
 // Columns holds all SQL columns for books fields.
 var Columns = []string{
 	FieldID,
+	FieldAuthor,
+	FieldDescription,
+	FieldTitle,
+	FieldQuantity,
+	FieldAvailableQuantity,
+	FieldPublisDate,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
+
+var (
+	// CategoriesPrimaryKey and CategoriesColumn2 are the table columns denoting the
+	// primary key for the categories relation (M2M).
+	CategoriesPrimaryKey = []string{"books_id", "categories_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -30,10 +79,101 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+)
+
 // OrderOption defines the ordering options for the Books queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByAuthor orders the results by the author field.
+func ByAuthor(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthor, opts...).ToFunc()
+}
+
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByTitle orders the results by the title field.
+func ByTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTitle, opts...).ToFunc()
+}
+
+// ByQuantity orders the results by the quantity field.
+func ByQuantity(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldQuantity, opts...).ToFunc()
+}
+
+// ByAvailableQuantity orders the results by the available_quantity field.
+func ByAvailableQuantity(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvailableQuantity, opts...).ToFunc()
+}
+
+// ByPublisDate orders the results by the publis_date field.
+func ByPublisDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPublisDate, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByBorrowingsCount orders the results by borrowings count.
+func ByBorrowingsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBorrowingsStep(), opts...)
+	}
+}
+
+// ByBorrowings orders the results by borrowings terms.
+func ByBorrowings(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBorrowingsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByCategoriesCount orders the results by categories count.
+func ByCategoriesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCategoriesStep(), opts...)
+	}
+}
+
+// ByCategories orders the results by categories terms.
+func ByCategories(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCategoriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newBorrowingsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BorrowingsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, BorrowingsTable, BorrowingsColumn),
+	)
+}
+func newCategoriesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CategoriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, CategoriesTable, CategoriesPrimaryKey...),
+	)
 }

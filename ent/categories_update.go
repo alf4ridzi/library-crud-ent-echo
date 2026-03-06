@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
 )
@@ -27,9 +28,59 @@ func (_u *CategoriesUpdate) Where(ps ...predicate.Categories) *CategoriesUpdate 
 	return _u
 }
 
+// SetName sets the "name" field.
+func (_u *CategoriesUpdate) SetName(v string) *CategoriesUpdate {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *CategoriesUpdate) SetNillableName(v *string) *CategoriesUpdate {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
+// AddBookIDs adds the "books" edge to the Books entity by IDs.
+func (_u *CategoriesUpdate) AddBookIDs(ids ...uint) *CategoriesUpdate {
+	_u.mutation.AddBookIDs(ids...)
+	return _u
+}
+
+// AddBooks adds the "books" edges to the Books entity.
+func (_u *CategoriesUpdate) AddBooks(v ...*Books) *CategoriesUpdate {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBookIDs(ids...)
+}
+
 // Mutation returns the CategoriesMutation object of the builder.
 func (_u *CategoriesUpdate) Mutation() *CategoriesMutation {
 	return _u.mutation
+}
+
+// ClearBooks clears all "books" edges to the Books entity.
+func (_u *CategoriesUpdate) ClearBooks() *CategoriesUpdate {
+	_u.mutation.ClearBooks()
+	return _u
+}
+
+// RemoveBookIDs removes the "books" edge to Books entities by IDs.
+func (_u *CategoriesUpdate) RemoveBookIDs(ids ...uint) *CategoriesUpdate {
+	_u.mutation.RemoveBookIDs(ids...)
+	return _u
+}
+
+// RemoveBooks removes "books" edges to Books entities.
+func (_u *CategoriesUpdate) RemoveBooks(v ...*Books) *CategoriesUpdate {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBookIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -60,13 +111,61 @@ func (_u *CategoriesUpdate) ExecX(ctx context.Context) {
 }
 
 func (_u *CategoriesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(categories.Table, categories.Columns, sqlgraph.NewFieldSpec(categories.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(categories.Table, categories.Columns, sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(categories.FieldName, field.TypeString, value)
+	}
+	if _u.mutation.BooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBooksIDs(); len(nodes) > 0 && !_u.mutation.BooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -88,9 +187,59 @@ type CategoriesUpdateOne struct {
 	mutation *CategoriesMutation
 }
 
+// SetName sets the "name" field.
+func (_u *CategoriesUpdateOne) SetName(v string) *CategoriesUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *CategoriesUpdateOne) SetNillableName(v *string) *CategoriesUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
+// AddBookIDs adds the "books" edge to the Books entity by IDs.
+func (_u *CategoriesUpdateOne) AddBookIDs(ids ...uint) *CategoriesUpdateOne {
+	_u.mutation.AddBookIDs(ids...)
+	return _u
+}
+
+// AddBooks adds the "books" edges to the Books entity.
+func (_u *CategoriesUpdateOne) AddBooks(v ...*Books) *CategoriesUpdateOne {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBookIDs(ids...)
+}
+
 // Mutation returns the CategoriesMutation object of the builder.
 func (_u *CategoriesUpdateOne) Mutation() *CategoriesMutation {
 	return _u.mutation
+}
+
+// ClearBooks clears all "books" edges to the Books entity.
+func (_u *CategoriesUpdateOne) ClearBooks() *CategoriesUpdateOne {
+	_u.mutation.ClearBooks()
+	return _u
+}
+
+// RemoveBookIDs removes the "books" edge to Books entities by IDs.
+func (_u *CategoriesUpdateOne) RemoveBookIDs(ids ...uint) *CategoriesUpdateOne {
+	_u.mutation.RemoveBookIDs(ids...)
+	return _u
+}
+
+// RemoveBooks removes "books" edges to Books entities.
+func (_u *CategoriesUpdateOne) RemoveBooks(v ...*Books) *CategoriesUpdateOne {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBookIDs(ids...)
 }
 
 // Where appends a list predicates to the CategoriesUpdate builder.
@@ -134,7 +283,7 @@ func (_u *CategoriesUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (_u *CategoriesUpdateOne) sqlSave(ctx context.Context) (_node *Categories, err error) {
-	_spec := sqlgraph.NewUpdateSpec(categories.Table, categories.Columns, sqlgraph.NewFieldSpec(categories.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(categories.Table, categories.Columns, sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Categories.id" for update`)}
@@ -158,6 +307,54 @@ func (_u *CategoriesUpdateOne) sqlSave(ctx context.Context) (_node *Categories, 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(categories.FieldName, field.TypeString, value)
+	}
+	if _u.mutation.BooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBooksIDs(); len(nodes) > 0 && !_u.mutation.BooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Categories{config: _u.config}
 	_spec.Assign = _node.assignValues

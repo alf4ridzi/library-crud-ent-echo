@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
@@ -76,6 +77,21 @@ func (_c *UserCreate) SetNillableUpdatedAt(v *time.Time) *UserCreate {
 func (_c *UserCreate) SetID(v uint) *UserCreate {
 	_c.mutation.SetID(v)
 	return _c
+}
+
+// AddBorrowingIDs adds the "borrowings" edge to the Borrowings entity by IDs.
+func (_c *UserCreate) AddBorrowingIDs(ids ...int) *UserCreate {
+	_c.mutation.AddBorrowingIDs(ids...)
+	return _c
+}
+
+// AddBorrowings adds the "borrowings" edges to the Borrowings entity.
+func (_c *UserCreate) AddBorrowings(v ...*Borrowings) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddBorrowingIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -212,6 +228,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if nodes := _c.mutation.BorrowingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

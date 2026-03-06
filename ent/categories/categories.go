@@ -4,6 +4,7 @@ package categories
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,14 +12,30 @@ const (
 	Label = "categories"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// EdgeBooks holds the string denoting the books edge name in mutations.
+	EdgeBooks = "books"
 	// Table holds the table name of the categories in the database.
 	Table = "categories"
+	// BooksTable is the table that holds the books relation/edge. The primary key declared below.
+	BooksTable = "books_categories"
+	// BooksInverseTable is the table name for the Books entity.
+	// It exists in this package in order to avoid circular dependency with the "books" package.
+	BooksInverseTable = "books"
 )
 
 // Columns holds all SQL columns for categories fields.
 var Columns = []string{
 	FieldID,
+	FieldName,
 }
+
+var (
+	// BooksPrimaryKey and BooksColumn2 are the table columns denoting the
+	// primary key for the books relation (M2M).
+	BooksPrimaryKey = []string{"books_id", "categories_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -36,4 +53,30 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByBooksCount orders the results by books count.
+func ByBooksCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBooksStep(), opts...)
+	}
+}
+
+// ByBooks orders the results by books terms.
+func ByBooks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBooksStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newBooksStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BooksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, BooksTable, BooksPrimaryKey...),
+	)
 }

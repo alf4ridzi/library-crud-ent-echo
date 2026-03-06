@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -12,16 +13,20 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
 )
 
 // BooksQuery is the builder for querying Books entities.
 type BooksQuery struct {
 	config
-	ctx        *QueryContext
-	order      []books.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Books
+	ctx            *QueryContext
+	order          []books.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.Books
+	withBorrowings *BorrowingsQuery
+	withCategories *CategoriesQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +63,50 @@ func (_q *BooksQuery) Order(o ...books.OrderOption) *BooksQuery {
 	return _q
 }
 
+// QueryBorrowings chains the current query on the "borrowings" edge.
+func (_q *BooksQuery) QueryBorrowings() *BorrowingsQuery {
+	query := (&BorrowingsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(books.Table, books.FieldID, selector),
+			sqlgraph.To(borrowings.Table, borrowings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, books.BorrowingsTable, books.BorrowingsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCategories chains the current query on the "categories" edge.
+func (_q *BooksQuery) QueryCategories() *CategoriesQuery {
+	query := (&CategoriesClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(books.Table, books.FieldID, selector),
+			sqlgraph.To(categories.Table, categories.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, books.CategoriesTable, books.CategoriesPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Books entity from the query.
 // Returns a *NotFoundError when no Books was found.
 func (_q *BooksQuery) First(ctx context.Context) (*Books, error) {
@@ -82,8 +131,8 @@ func (_q *BooksQuery) FirstX(ctx context.Context) *Books {
 
 // FirstID returns the first Books ID from the query.
 // Returns a *NotFoundError when no Books ID was found.
-func (_q *BooksQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *BooksQuery) FirstID(ctx context.Context) (id uint, err error) {
+	var ids []uint
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -95,7 +144,7 @@ func (_q *BooksQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *BooksQuery) FirstIDX(ctx context.Context) int {
+func (_q *BooksQuery) FirstIDX(ctx context.Context) uint {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -133,8 +182,8 @@ func (_q *BooksQuery) OnlyX(ctx context.Context) *Books {
 // OnlyID is like Only, but returns the only Books ID in the query.
 // Returns a *NotSingularError when more than one Books ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *BooksQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *BooksQuery) OnlyID(ctx context.Context) (id uint, err error) {
+	var ids []uint
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -150,7 +199,7 @@ func (_q *BooksQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *BooksQuery) OnlyIDX(ctx context.Context) int {
+func (_q *BooksQuery) OnlyIDX(ctx context.Context) uint {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,7 +227,7 @@ func (_q *BooksQuery) AllX(ctx context.Context) []*Books {
 }
 
 // IDs executes the query and returns a list of Books IDs.
-func (_q *BooksQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (_q *BooksQuery) IDs(ctx context.Context) (ids []uint, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -190,7 +239,7 @@ func (_q *BooksQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *BooksQuery) IDsX(ctx context.Context) []int {
+func (_q *BooksQuery) IDsX(ctx context.Context) []uint {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -245,19 +294,55 @@ func (_q *BooksQuery) Clone() *BooksQuery {
 		return nil
 	}
 	return &BooksQuery{
-		config:     _q.config,
-		ctx:        _q.ctx.Clone(),
-		order:      append([]books.OrderOption{}, _q.order...),
-		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Books{}, _q.predicates...),
+		config:         _q.config,
+		ctx:            _q.ctx.Clone(),
+		order:          append([]books.OrderOption{}, _q.order...),
+		inters:         append([]Interceptor{}, _q.inters...),
+		predicates:     append([]predicate.Books{}, _q.predicates...),
+		withBorrowings: _q.withBorrowings.Clone(),
+		withCategories: _q.withCategories.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
+// WithBorrowings tells the query-builder to eager-load the nodes that are connected to
+// the "borrowings" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BooksQuery) WithBorrowings(opts ...func(*BorrowingsQuery)) *BooksQuery {
+	query := (&BorrowingsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withBorrowings = query
+	return _q
+}
+
+// WithCategories tells the query-builder to eager-load the nodes that are connected to
+// the "categories" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BooksQuery) WithCategories(opts ...func(*CategoriesQuery)) *BooksQuery {
+	query := (&CategoriesClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withCategories = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Author string `json:"author,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Books.Query().
+//		GroupBy(books.FieldAuthor).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *BooksQuery) GroupBy(field string, fields ...string) *BooksGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &BooksGroupBy{build: _q}
@@ -269,6 +354,16 @@ func (_q *BooksQuery) GroupBy(field string, fields ...string) *BooksGroupBy {
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Author string `json:"author,omitempty"`
+//	}
+//
+//	client.Books.Query().
+//		Select(books.FieldAuthor).
+//		Scan(ctx, &v)
 func (_q *BooksQuery) Select(fields ...string) *BooksSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &BooksSelect{BooksQuery: _q}
@@ -310,8 +405,12 @@ func (_q *BooksQuery) prepareQuery(ctx context.Context) error {
 
 func (_q *BooksQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Books, error) {
 	var (
-		nodes = []*Books{}
-		_spec = _q.querySpec()
+		nodes       = []*Books{}
+		_spec       = _q.querySpec()
+		loadedTypes = [2]bool{
+			_q.withBorrowings != nil,
+			_q.withCategories != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Books).scanValues(nil, columns)
@@ -319,6 +418,7 @@ func (_q *BooksQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Books,
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Books{config: _q.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -330,7 +430,113 @@ func (_q *BooksQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Books,
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withBorrowings; query != nil {
+		if err := _q.loadBorrowings(ctx, query, nodes,
+			func(n *Books) { n.Edges.Borrowings = []*Borrowings{} },
+			func(n *Books, e *Borrowings) { n.Edges.Borrowings = append(n.Edges.Borrowings, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withCategories; query != nil {
+		if err := _q.loadCategories(ctx, query, nodes,
+			func(n *Books) { n.Edges.Categories = []*Categories{} },
+			func(n *Books, e *Categories) { n.Edges.Categories = append(n.Edges.Categories, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (_q *BooksQuery) loadBorrowings(ctx context.Context, query *BorrowingsQuery, nodes []*Books, init func(*Books), assign func(*Books, *Borrowings)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uint]*Books)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(borrowings.FieldBookID)
+	}
+	query.Where(predicate.Borrowings(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(books.BorrowingsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.BookID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "book_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *BooksQuery) loadCategories(ctx context.Context, query *CategoriesQuery, nodes []*Books, init func(*Books), assign func(*Books, *Categories)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[uint]*Books)
+	nids := make(map[uint]map[*Books]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(books.CategoriesTable)
+		s.Join(joinT).On(s.C(categories.FieldID), joinT.C(books.CategoriesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(books.CategoriesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(books.CategoriesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := uint(values[0].(*sql.NullInt64).Int64)
+				inValue := uint(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Books]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Categories](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "categories" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
 }
 
 func (_q *BooksQuery) sqlCount(ctx context.Context) (int, error) {
@@ -343,7 +549,7 @@ func (_q *BooksQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *BooksQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(books.Table, books.Columns, sqlgraph.NewFieldSpec(books.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(books.Table, books.Columns, sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

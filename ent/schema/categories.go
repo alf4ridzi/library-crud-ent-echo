@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -20,5 +21,7 @@ func (Categories) Fields() []ent.Field {
 
 // Edges of the Categories.
 func (Categories) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("books", Books.Type).Ref("categories"),
+	}
 }

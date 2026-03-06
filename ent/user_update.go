@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
@@ -104,9 +105,45 @@ func (_u *UserUpdate) SetUpdatedAt(v time.Time) *UserUpdate {
 	return _u
 }
 
+// AddBorrowingIDs adds the "borrowings" edge to the Borrowings entity by IDs.
+func (_u *UserUpdate) AddBorrowingIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddBorrowingIDs(ids...)
+	return _u
+}
+
+// AddBorrowings adds the "borrowings" edges to the Borrowings entity.
+func (_u *UserUpdate) AddBorrowings(v ...*Borrowings) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBorrowingIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
+}
+
+// ClearBorrowings clears all "borrowings" edges to the Borrowings entity.
+func (_u *UserUpdate) ClearBorrowings() *UserUpdate {
+	_u.mutation.ClearBorrowings()
+	return _u
+}
+
+// RemoveBorrowingIDs removes the "borrowings" edge to Borrowings entities by IDs.
+func (_u *UserUpdate) RemoveBorrowingIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveBorrowingIDs(ids...)
+	return _u
+}
+
+// RemoveBorrowings removes "borrowings" edges to Borrowings entities.
+func (_u *UserUpdate) RemoveBorrowings(v ...*Borrowings) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBorrowingIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -177,6 +214,51 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if _u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBorrowingsIDs(); len(nodes) > 0 && !_u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BorrowingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -274,9 +356,45 @@ func (_u *UserUpdateOne) SetUpdatedAt(v time.Time) *UserUpdateOne {
 	return _u
 }
 
+// AddBorrowingIDs adds the "borrowings" edge to the Borrowings entity by IDs.
+func (_u *UserUpdateOne) AddBorrowingIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddBorrowingIDs(ids...)
+	return _u
+}
+
+// AddBorrowings adds the "borrowings" edges to the Borrowings entity.
+func (_u *UserUpdateOne) AddBorrowings(v ...*Borrowings) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBorrowingIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
+}
+
+// ClearBorrowings clears all "borrowings" edges to the Borrowings entity.
+func (_u *UserUpdateOne) ClearBorrowings() *UserUpdateOne {
+	_u.mutation.ClearBorrowings()
+	return _u
+}
+
+// RemoveBorrowingIDs removes the "borrowings" edge to Borrowings entities by IDs.
+func (_u *UserUpdateOne) RemoveBorrowingIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveBorrowingIDs(ids...)
+	return _u
+}
+
+// RemoveBorrowings removes "borrowings" edges to Borrowings entities.
+func (_u *UserUpdateOne) RemoveBorrowings(v ...*Borrowings) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBorrowingIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -377,6 +495,51 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if _u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBorrowingsIDs(); len(nodes) > 0 && !_u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BorrowingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.BorrowingsTable,
+			Columns: []string{user.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: _u.config}
 	_spec.Assign = _node.assignValues

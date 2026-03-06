@@ -10,7 +10,15 @@ import (
 var (
 	// BooksColumns holds the columns for the "books" table.
 	BooksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUint, Increment: true},
+		{Name: "author", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString},
+		{Name: "title", Type: field.TypeString},
+		{Name: "quantity", Type: field.TypeInt},
+		{Name: "available_quantity", Type: field.TypeInt},
+		{Name: "publis_date", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
 	// BooksTable holds the schema information for the "books" table.
 	BooksTable = &schema.Table{
@@ -21,16 +29,35 @@ var (
 	// BorrowingsColumns holds the columns for the "borrowings" table.
 	BorrowingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "release_date", Type: field.TypeTime},
+		{Name: "due_date", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeUint},
+		{Name: "book_id", Type: field.TypeUint},
 	}
 	// BorrowingsTable holds the schema information for the "borrowings" table.
 	BorrowingsTable = &schema.Table{
 		Name:       "borrowings",
 		Columns:    BorrowingsColumns,
 		PrimaryKey: []*schema.Column{BorrowingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "borrowings_users_user",
+				Columns:    []*schema.Column{BorrowingsColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "borrowings_books_book",
+				Columns:    []*schema.Column{BorrowingsColumns[4]},
+				RefColumns: []*schema.Column{BooksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// CategoriesColumns holds the columns for the "categories" table.
 	CategoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUint, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
 	}
 	// CategoriesTable holds the schema information for the "categories" table.
 	CategoriesTable = &schema.Table{
@@ -54,14 +81,44 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// BooksCategoriesColumns holds the columns for the "books_categories" table.
+	BooksCategoriesColumns = []*schema.Column{
+		{Name: "books_id", Type: field.TypeUint},
+		{Name: "categories_id", Type: field.TypeUint},
+	}
+	// BooksCategoriesTable holds the schema information for the "books_categories" table.
+	BooksCategoriesTable = &schema.Table{
+		Name:       "books_categories",
+		Columns:    BooksCategoriesColumns,
+		PrimaryKey: []*schema.Column{BooksCategoriesColumns[0], BooksCategoriesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "books_categories_books_id",
+				Columns:    []*schema.Column{BooksCategoriesColumns[0]},
+				RefColumns: []*schema.Column{BooksColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "books_categories_categories_id",
+				Columns:    []*schema.Column{BooksCategoriesColumns[1]},
+				RefColumns: []*schema.Column{CategoriesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		BooksTable,
 		BorrowingsTable,
 		CategoriesTable,
 		UsersTable,
+		BooksCategoriesTable,
 	}
 )
 
 func init() {
+	BorrowingsTable.ForeignKeys[0].RefTable = UsersTable
+	BorrowingsTable.ForeignKeys[1].RefTable = BooksTable
+	BooksCategoriesTable.ForeignKeys[0].RefTable = BooksTable
+	BooksCategoriesTable.ForeignKeys[1].RefTable = CategoriesTable
 }

@@ -6,12 +6,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
 // BorrowingsUpdate is the builder for updating Borrowings entities.
@@ -27,9 +30,87 @@ func (_u *BorrowingsUpdate) Where(ps ...predicate.Borrowings) *BorrowingsUpdate 
 	return _u
 }
 
+// SetBookID sets the "book_id" field.
+func (_u *BorrowingsUpdate) SetBookID(v uint) *BorrowingsUpdate {
+	_u.mutation.SetBookID(v)
+	return _u
+}
+
+// SetNillableBookID sets the "book_id" field if the given value is not nil.
+func (_u *BorrowingsUpdate) SetNillableBookID(v *uint) *BorrowingsUpdate {
+	if v != nil {
+		_u.SetBookID(*v)
+	}
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *BorrowingsUpdate) SetUserID(v uint) *BorrowingsUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *BorrowingsUpdate) SetNillableUserID(v *uint) *BorrowingsUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetReleaseDate sets the "release_date" field.
+func (_u *BorrowingsUpdate) SetReleaseDate(v time.Time) *BorrowingsUpdate {
+	_u.mutation.SetReleaseDate(v)
+	return _u
+}
+
+// SetNillableReleaseDate sets the "release_date" field if the given value is not nil.
+func (_u *BorrowingsUpdate) SetNillableReleaseDate(v *time.Time) *BorrowingsUpdate {
+	if v != nil {
+		_u.SetReleaseDate(*v)
+	}
+	return _u
+}
+
+// SetDueDate sets the "due_date" field.
+func (_u *BorrowingsUpdate) SetDueDate(v time.Time) *BorrowingsUpdate {
+	_u.mutation.SetDueDate(v)
+	return _u
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_u *BorrowingsUpdate) SetNillableDueDate(v *time.Time) *BorrowingsUpdate {
+	if v != nil {
+		_u.SetDueDate(*v)
+	}
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *BorrowingsUpdate) SetUser(v *User) *BorrowingsUpdate {
+	return _u.SetUserID(v.ID)
+}
+
+// SetBook sets the "book" edge to the Books entity.
+func (_u *BorrowingsUpdate) SetBook(v *Books) *BorrowingsUpdate {
+	return _u.SetBookID(v.ID)
+}
+
 // Mutation returns the BorrowingsMutation object of the builder.
 func (_u *BorrowingsUpdate) Mutation() *BorrowingsMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *BorrowingsUpdate) ClearUser() *BorrowingsUpdate {
+	_u.mutation.ClearUser()
+	return _u
+}
+
+// ClearBook clears the "book" edge to the Books entity.
+func (_u *BorrowingsUpdate) ClearBook() *BorrowingsUpdate {
+	_u.mutation.ClearBook()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -59,7 +140,21 @@ func (_u *BorrowingsUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *BorrowingsUpdate) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Borrowings.user"`)
+	}
+	if _u.mutation.BookCleared() && len(_u.mutation.BookIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Borrowings.book"`)
+	}
+	return nil
+}
+
 func (_u *BorrowingsUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(borrowings.Table, borrowings.Columns, sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -67,6 +162,70 @@ func (_u *BorrowingsUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.ReleaseDate(); ok {
+		_spec.SetField(borrowings.FieldReleaseDate, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.DueDate(); ok {
+		_spec.SetField(borrowings.FieldDueDate, field.TypeTime, value)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.UserTable,
+			Columns: []string{borrowings.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.UserTable,
+			Columns: []string{borrowings.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.BookCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.BookTable,
+			Columns: []string{borrowings.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BookIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.BookTable,
+			Columns: []string{borrowings.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -88,9 +247,87 @@ type BorrowingsUpdateOne struct {
 	mutation *BorrowingsMutation
 }
 
+// SetBookID sets the "book_id" field.
+func (_u *BorrowingsUpdateOne) SetBookID(v uint) *BorrowingsUpdateOne {
+	_u.mutation.SetBookID(v)
+	return _u
+}
+
+// SetNillableBookID sets the "book_id" field if the given value is not nil.
+func (_u *BorrowingsUpdateOne) SetNillableBookID(v *uint) *BorrowingsUpdateOne {
+	if v != nil {
+		_u.SetBookID(*v)
+	}
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *BorrowingsUpdateOne) SetUserID(v uint) *BorrowingsUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *BorrowingsUpdateOne) SetNillableUserID(v *uint) *BorrowingsUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetReleaseDate sets the "release_date" field.
+func (_u *BorrowingsUpdateOne) SetReleaseDate(v time.Time) *BorrowingsUpdateOne {
+	_u.mutation.SetReleaseDate(v)
+	return _u
+}
+
+// SetNillableReleaseDate sets the "release_date" field if the given value is not nil.
+func (_u *BorrowingsUpdateOne) SetNillableReleaseDate(v *time.Time) *BorrowingsUpdateOne {
+	if v != nil {
+		_u.SetReleaseDate(*v)
+	}
+	return _u
+}
+
+// SetDueDate sets the "due_date" field.
+func (_u *BorrowingsUpdateOne) SetDueDate(v time.Time) *BorrowingsUpdateOne {
+	_u.mutation.SetDueDate(v)
+	return _u
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_u *BorrowingsUpdateOne) SetNillableDueDate(v *time.Time) *BorrowingsUpdateOne {
+	if v != nil {
+		_u.SetDueDate(*v)
+	}
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *BorrowingsUpdateOne) SetUser(v *User) *BorrowingsUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
+// SetBook sets the "book" edge to the Books entity.
+func (_u *BorrowingsUpdateOne) SetBook(v *Books) *BorrowingsUpdateOne {
+	return _u.SetBookID(v.ID)
+}
+
 // Mutation returns the BorrowingsMutation object of the builder.
 func (_u *BorrowingsUpdateOne) Mutation() *BorrowingsMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *BorrowingsUpdateOne) ClearUser() *BorrowingsUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
+}
+
+// ClearBook clears the "book" edge to the Books entity.
+func (_u *BorrowingsUpdateOne) ClearBook() *BorrowingsUpdateOne {
+	_u.mutation.ClearBook()
+	return _u
 }
 
 // Where appends a list predicates to the BorrowingsUpdate builder.
@@ -133,7 +370,21 @@ func (_u *BorrowingsUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *BorrowingsUpdateOne) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Borrowings.user"`)
+	}
+	if _u.mutation.BookCleared() && len(_u.mutation.BookIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Borrowings.book"`)
+	}
+	return nil
+}
+
 func (_u *BorrowingsUpdateOne) sqlSave(ctx context.Context) (_node *Borrowings, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(borrowings.Table, borrowings.Columns, sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -158,6 +409,70 @@ func (_u *BorrowingsUpdateOne) sqlSave(ctx context.Context) (_node *Borrowings, 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.ReleaseDate(); ok {
+		_spec.SetField(borrowings.FieldReleaseDate, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.DueDate(); ok {
+		_spec.SetField(borrowings.FieldDueDate, field.TypeTime, value)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.UserTable,
+			Columns: []string{borrowings.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.UserTable,
+			Columns: []string{borrowings.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.BookCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.BookTable,
+			Columns: []string{borrowings.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BookIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   borrowings.BookTable,
+			Columns: []string{borrowings.BookColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Borrowings{config: _u.config}
 	_spec.Assign = _node.assignValues

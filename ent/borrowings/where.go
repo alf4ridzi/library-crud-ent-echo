@@ -3,7 +3,10 @@
 package borrowings
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
 )
 
@@ -50,6 +53,192 @@ func IDLT(id int) predicate.Borrowings {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.Borrowings {
 	return predicate.Borrowings(sql.FieldLTE(FieldID, id))
+}
+
+// BookID applies equality check predicate on the "book_id" field. It's identical to BookIDEQ.
+func BookID(v uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldBookID, v))
+}
+
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldUserID, v))
+}
+
+// ReleaseDate applies equality check predicate on the "release_date" field. It's identical to ReleaseDateEQ.
+func ReleaseDate(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldReleaseDate, v))
+}
+
+// DueDate applies equality check predicate on the "due_date" field. It's identical to DueDateEQ.
+func DueDate(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldDueDate, v))
+}
+
+// BookIDEQ applies the EQ predicate on the "book_id" field.
+func BookIDEQ(v uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldBookID, v))
+}
+
+// BookIDNEQ applies the NEQ predicate on the "book_id" field.
+func BookIDNEQ(v uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNEQ(FieldBookID, v))
+}
+
+// BookIDIn applies the In predicate on the "book_id" field.
+func BookIDIn(vs ...uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldIn(FieldBookID, vs...))
+}
+
+// BookIDNotIn applies the NotIn predicate on the "book_id" field.
+func BookIDNotIn(vs ...uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNotIn(FieldBookID, vs...))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// ReleaseDateEQ applies the EQ predicate on the "release_date" field.
+func ReleaseDateEQ(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldReleaseDate, v))
+}
+
+// ReleaseDateNEQ applies the NEQ predicate on the "release_date" field.
+func ReleaseDateNEQ(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNEQ(FieldReleaseDate, v))
+}
+
+// ReleaseDateIn applies the In predicate on the "release_date" field.
+func ReleaseDateIn(vs ...time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldIn(FieldReleaseDate, vs...))
+}
+
+// ReleaseDateNotIn applies the NotIn predicate on the "release_date" field.
+func ReleaseDateNotIn(vs ...time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNotIn(FieldReleaseDate, vs...))
+}
+
+// ReleaseDateGT applies the GT predicate on the "release_date" field.
+func ReleaseDateGT(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldGT(FieldReleaseDate, v))
+}
+
+// ReleaseDateGTE applies the GTE predicate on the "release_date" field.
+func ReleaseDateGTE(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldGTE(FieldReleaseDate, v))
+}
+
+// ReleaseDateLT applies the LT predicate on the "release_date" field.
+func ReleaseDateLT(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldLT(FieldReleaseDate, v))
+}
+
+// ReleaseDateLTE applies the LTE predicate on the "release_date" field.
+func ReleaseDateLTE(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldLTE(FieldReleaseDate, v))
+}
+
+// DueDateEQ applies the EQ predicate on the "due_date" field.
+func DueDateEQ(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldEQ(FieldDueDate, v))
+}
+
+// DueDateNEQ applies the NEQ predicate on the "due_date" field.
+func DueDateNEQ(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNEQ(FieldDueDate, v))
+}
+
+// DueDateIn applies the In predicate on the "due_date" field.
+func DueDateIn(vs ...time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldIn(FieldDueDate, vs...))
+}
+
+// DueDateNotIn applies the NotIn predicate on the "due_date" field.
+func DueDateNotIn(vs ...time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNotIn(FieldDueDate, vs...))
+}
+
+// DueDateGT applies the GT predicate on the "due_date" field.
+func DueDateGT(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldGT(FieldDueDate, v))
+}
+
+// DueDateGTE applies the GTE predicate on the "due_date" field.
+func DueDateGTE(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldGTE(FieldDueDate, v))
+}
+
+// DueDateLT applies the LT predicate on the "due_date" field.
+func DueDateLT(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldLT(FieldDueDate, v))
+}
+
+// DueDateLTE applies the LTE predicate on the "due_date" field.
+func DueDateLTE(v time.Time) predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldLTE(FieldDueDate, v))
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Borrowings {
+	return predicate.Borrowings(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Borrowings {
+	return predicate.Borrowings(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasBook applies the HasEdge predicate on the "book" edge.
+func HasBook() predicate.Borrowings {
+	return predicate.Borrowings(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, BookTable, BookColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasBookWith applies the HasEdge predicate on the "book" edge with a given conditions (other predicates).
+func HasBookWith(preds ...predicate.Books) predicate.Borrowings {
+	return predicate.Borrowings(func(s *sql.Selector) {
+		step := newBookStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

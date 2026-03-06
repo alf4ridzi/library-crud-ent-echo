@@ -6,11 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/predicate"
 )
 
@@ -27,13 +30,204 @@ func (_u *BooksUpdate) Where(ps ...predicate.Books) *BooksUpdate {
 	return _u
 }
 
+// SetAuthor sets the "author" field.
+func (_u *BooksUpdate) SetAuthor(v string) *BooksUpdate {
+	_u.mutation.SetAuthor(v)
+	return _u
+}
+
+// SetNillableAuthor sets the "author" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillableAuthor(v *string) *BooksUpdate {
+	if v != nil {
+		_u.SetAuthor(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *BooksUpdate) SetDescription(v string) *BooksUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillableDescription(v *string) *BooksUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// SetTitle sets the "title" field.
+func (_u *BooksUpdate) SetTitle(v string) *BooksUpdate {
+	_u.mutation.SetTitle(v)
+	return _u
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillableTitle(v *string) *BooksUpdate {
+	if v != nil {
+		_u.SetTitle(*v)
+	}
+	return _u
+}
+
+// SetQuantity sets the "quantity" field.
+func (_u *BooksUpdate) SetQuantity(v int) *BooksUpdate {
+	_u.mutation.ResetQuantity()
+	_u.mutation.SetQuantity(v)
+	return _u
+}
+
+// SetNillableQuantity sets the "quantity" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillableQuantity(v *int) *BooksUpdate {
+	if v != nil {
+		_u.SetQuantity(*v)
+	}
+	return _u
+}
+
+// AddQuantity adds value to the "quantity" field.
+func (_u *BooksUpdate) AddQuantity(v int) *BooksUpdate {
+	_u.mutation.AddQuantity(v)
+	return _u
+}
+
+// SetAvailableQuantity sets the "available_quantity" field.
+func (_u *BooksUpdate) SetAvailableQuantity(v int) *BooksUpdate {
+	_u.mutation.ResetAvailableQuantity()
+	_u.mutation.SetAvailableQuantity(v)
+	return _u
+}
+
+// SetNillableAvailableQuantity sets the "available_quantity" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillableAvailableQuantity(v *int) *BooksUpdate {
+	if v != nil {
+		_u.SetAvailableQuantity(*v)
+	}
+	return _u
+}
+
+// AddAvailableQuantity adds value to the "available_quantity" field.
+func (_u *BooksUpdate) AddAvailableQuantity(v int) *BooksUpdate {
+	_u.mutation.AddAvailableQuantity(v)
+	return _u
+}
+
+// SetPublisDate sets the "publis_date" field.
+func (_u *BooksUpdate) SetPublisDate(v time.Time) *BooksUpdate {
+	_u.mutation.SetPublisDate(v)
+	return _u
+}
+
+// SetNillablePublisDate sets the "publis_date" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillablePublisDate(v *time.Time) *BooksUpdate {
+	if v != nil {
+		_u.SetPublisDate(*v)
+	}
+	return _u
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_u *BooksUpdate) SetCreatedAt(v time.Time) *BooksUpdate {
+	_u.mutation.SetCreatedAt(v)
+	return _u
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillableCreatedAt(v *time.Time) *BooksUpdate {
+	if v != nil {
+		_u.SetCreatedAt(*v)
+	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *BooksUpdate) SetUpdatedAt(v time.Time) *BooksUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// AddBorrowingIDs adds the "borrowings" edge to the Borrowings entity by IDs.
+func (_u *BooksUpdate) AddBorrowingIDs(ids ...int) *BooksUpdate {
+	_u.mutation.AddBorrowingIDs(ids...)
+	return _u
+}
+
+// AddBorrowings adds the "borrowings" edges to the Borrowings entity.
+func (_u *BooksUpdate) AddBorrowings(v ...*Borrowings) *BooksUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBorrowingIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Categories entity by IDs.
+func (_u *BooksUpdate) AddCategoryIDs(ids ...uint) *BooksUpdate {
+	_u.mutation.AddCategoryIDs(ids...)
+	return _u
+}
+
+// AddCategories adds the "categories" edges to the Categories entity.
+func (_u *BooksUpdate) AddCategories(v ...*Categories) *BooksUpdate {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the BooksMutation object of the builder.
 func (_u *BooksUpdate) Mutation() *BooksMutation {
 	return _u.mutation
 }
 
+// ClearBorrowings clears all "borrowings" edges to the Borrowings entity.
+func (_u *BooksUpdate) ClearBorrowings() *BooksUpdate {
+	_u.mutation.ClearBorrowings()
+	return _u
+}
+
+// RemoveBorrowingIDs removes the "borrowings" edge to Borrowings entities by IDs.
+func (_u *BooksUpdate) RemoveBorrowingIDs(ids ...int) *BooksUpdate {
+	_u.mutation.RemoveBorrowingIDs(ids...)
+	return _u
+}
+
+// RemoveBorrowings removes "borrowings" edges to Borrowings entities.
+func (_u *BooksUpdate) RemoveBorrowings(v ...*Borrowings) *BooksUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBorrowingIDs(ids...)
+}
+
+// ClearCategories clears all "categories" edges to the Categories entity.
+func (_u *BooksUpdate) ClearCategories() *BooksUpdate {
+	_u.mutation.ClearCategories()
+	return _u
+}
+
+// RemoveCategoryIDs removes the "categories" edge to Categories entities by IDs.
+func (_u *BooksUpdate) RemoveCategoryIDs(ids ...uint) *BooksUpdate {
+	_u.mutation.RemoveCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveCategories removes "categories" edges to Categories entities.
+func (_u *BooksUpdate) RemoveCategories(v ...*Categories) *BooksUpdate {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCategoryIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *BooksUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -59,14 +253,142 @@ func (_u *BooksUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *BooksUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := books.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (_u *BooksUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(books.Table, books.Columns, sqlgraph.NewFieldSpec(books.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(books.Table, books.Columns, sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.Author(); ok {
+		_spec.SetField(books.FieldAuthor, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(books.FieldDescription, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Title(); ok {
+		_spec.SetField(books.FieldTitle, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Quantity(); ok {
+		_spec.SetField(books.FieldQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedQuantity(); ok {
+		_spec.AddField(books.FieldQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AvailableQuantity(); ok {
+		_spec.SetField(books.FieldAvailableQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAvailableQuantity(); ok {
+		_spec.AddField(books.FieldAvailableQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.PublisDate(); ok {
+		_spec.SetField(books.FieldPublisDate, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.CreatedAt(); ok {
+		_spec.SetField(books.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(books.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if _u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBorrowingsIDs(); len(nodes) > 0 && !_u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BorrowingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCategoriesIDs(); len(nodes) > 0 && !_u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -88,9 +410,199 @@ type BooksUpdateOne struct {
 	mutation *BooksMutation
 }
 
+// SetAuthor sets the "author" field.
+func (_u *BooksUpdateOne) SetAuthor(v string) *BooksUpdateOne {
+	_u.mutation.SetAuthor(v)
+	return _u
+}
+
+// SetNillableAuthor sets the "author" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillableAuthor(v *string) *BooksUpdateOne {
+	if v != nil {
+		_u.SetAuthor(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *BooksUpdateOne) SetDescription(v string) *BooksUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillableDescription(v *string) *BooksUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// SetTitle sets the "title" field.
+func (_u *BooksUpdateOne) SetTitle(v string) *BooksUpdateOne {
+	_u.mutation.SetTitle(v)
+	return _u
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillableTitle(v *string) *BooksUpdateOne {
+	if v != nil {
+		_u.SetTitle(*v)
+	}
+	return _u
+}
+
+// SetQuantity sets the "quantity" field.
+func (_u *BooksUpdateOne) SetQuantity(v int) *BooksUpdateOne {
+	_u.mutation.ResetQuantity()
+	_u.mutation.SetQuantity(v)
+	return _u
+}
+
+// SetNillableQuantity sets the "quantity" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillableQuantity(v *int) *BooksUpdateOne {
+	if v != nil {
+		_u.SetQuantity(*v)
+	}
+	return _u
+}
+
+// AddQuantity adds value to the "quantity" field.
+func (_u *BooksUpdateOne) AddQuantity(v int) *BooksUpdateOne {
+	_u.mutation.AddQuantity(v)
+	return _u
+}
+
+// SetAvailableQuantity sets the "available_quantity" field.
+func (_u *BooksUpdateOne) SetAvailableQuantity(v int) *BooksUpdateOne {
+	_u.mutation.ResetAvailableQuantity()
+	_u.mutation.SetAvailableQuantity(v)
+	return _u
+}
+
+// SetNillableAvailableQuantity sets the "available_quantity" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillableAvailableQuantity(v *int) *BooksUpdateOne {
+	if v != nil {
+		_u.SetAvailableQuantity(*v)
+	}
+	return _u
+}
+
+// AddAvailableQuantity adds value to the "available_quantity" field.
+func (_u *BooksUpdateOne) AddAvailableQuantity(v int) *BooksUpdateOne {
+	_u.mutation.AddAvailableQuantity(v)
+	return _u
+}
+
+// SetPublisDate sets the "publis_date" field.
+func (_u *BooksUpdateOne) SetPublisDate(v time.Time) *BooksUpdateOne {
+	_u.mutation.SetPublisDate(v)
+	return _u
+}
+
+// SetNillablePublisDate sets the "publis_date" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillablePublisDate(v *time.Time) *BooksUpdateOne {
+	if v != nil {
+		_u.SetPublisDate(*v)
+	}
+	return _u
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_u *BooksUpdateOne) SetCreatedAt(v time.Time) *BooksUpdateOne {
+	_u.mutation.SetCreatedAt(v)
+	return _u
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillableCreatedAt(v *time.Time) *BooksUpdateOne {
+	if v != nil {
+		_u.SetCreatedAt(*v)
+	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *BooksUpdateOne) SetUpdatedAt(v time.Time) *BooksUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// AddBorrowingIDs adds the "borrowings" edge to the Borrowings entity by IDs.
+func (_u *BooksUpdateOne) AddBorrowingIDs(ids ...int) *BooksUpdateOne {
+	_u.mutation.AddBorrowingIDs(ids...)
+	return _u
+}
+
+// AddBorrowings adds the "borrowings" edges to the Borrowings entity.
+func (_u *BooksUpdateOne) AddBorrowings(v ...*Borrowings) *BooksUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBorrowingIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Categories entity by IDs.
+func (_u *BooksUpdateOne) AddCategoryIDs(ids ...uint) *BooksUpdateOne {
+	_u.mutation.AddCategoryIDs(ids...)
+	return _u
+}
+
+// AddCategories adds the "categories" edges to the Categories entity.
+func (_u *BooksUpdateOne) AddCategories(v ...*Categories) *BooksUpdateOne {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the BooksMutation object of the builder.
 func (_u *BooksUpdateOne) Mutation() *BooksMutation {
 	return _u.mutation
+}
+
+// ClearBorrowings clears all "borrowings" edges to the Borrowings entity.
+func (_u *BooksUpdateOne) ClearBorrowings() *BooksUpdateOne {
+	_u.mutation.ClearBorrowings()
+	return _u
+}
+
+// RemoveBorrowingIDs removes the "borrowings" edge to Borrowings entities by IDs.
+func (_u *BooksUpdateOne) RemoveBorrowingIDs(ids ...int) *BooksUpdateOne {
+	_u.mutation.RemoveBorrowingIDs(ids...)
+	return _u
+}
+
+// RemoveBorrowings removes "borrowings" edges to Borrowings entities.
+func (_u *BooksUpdateOne) RemoveBorrowings(v ...*Borrowings) *BooksUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBorrowingIDs(ids...)
+}
+
+// ClearCategories clears all "categories" edges to the Categories entity.
+func (_u *BooksUpdateOne) ClearCategories() *BooksUpdateOne {
+	_u.mutation.ClearCategories()
+	return _u
+}
+
+// RemoveCategoryIDs removes the "categories" edge to Categories entities by IDs.
+func (_u *BooksUpdateOne) RemoveCategoryIDs(ids ...uint) *BooksUpdateOne {
+	_u.mutation.RemoveCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveCategories removes "categories" edges to Categories entities.
+func (_u *BooksUpdateOne) RemoveCategories(v ...*Categories) *BooksUpdateOne {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCategoryIDs(ids...)
 }
 
 // Where appends a list predicates to the BooksUpdate builder.
@@ -108,6 +620,7 @@ func (_u *BooksUpdateOne) Select(field string, fields ...string) *BooksUpdateOne
 
 // Save executes the query and returns the updated Books entity.
 func (_u *BooksUpdateOne) Save(ctx context.Context) (*Books, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -133,8 +646,16 @@ func (_u *BooksUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *BooksUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := books.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (_u *BooksUpdateOne) sqlSave(ctx context.Context) (_node *Books, err error) {
-	_spec := sqlgraph.NewUpdateSpec(books.Table, books.Columns, sqlgraph.NewFieldSpec(books.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(books.Table, books.Columns, sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Books.id" for update`)}
@@ -158,6 +679,126 @@ func (_u *BooksUpdateOne) sqlSave(ctx context.Context) (_node *Books, err error)
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.Author(); ok {
+		_spec.SetField(books.FieldAuthor, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(books.FieldDescription, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Title(); ok {
+		_spec.SetField(books.FieldTitle, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Quantity(); ok {
+		_spec.SetField(books.FieldQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedQuantity(); ok {
+		_spec.AddField(books.FieldQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AvailableQuantity(); ok {
+		_spec.SetField(books.FieldAvailableQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAvailableQuantity(); ok {
+		_spec.AddField(books.FieldAvailableQuantity, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.PublisDate(); ok {
+		_spec.SetField(books.FieldPublisDate, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.CreatedAt(); ok {
+		_spec.SetField(books.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(books.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if _u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBorrowingsIDs(); len(nodes) > 0 && !_u.mutation.BorrowingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BorrowingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   books.BorrowingsTable,
+			Columns: []string{books.BorrowingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(borrowings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCategoriesIDs(); len(nodes) > 0 && !_u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   books.CategoriesTable,
+			Columns: books.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Books{config: _u.config}
 	_spec.Assign = _node.assignValues

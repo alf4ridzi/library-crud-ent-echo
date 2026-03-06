@@ -13,10 +13,33 @@ import (
 
 // Categories is the model entity for the Categories schema.
 type Categories struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID uint `json:"id,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the CategoriesQuery when eager-loading is set.
+	Edges        CategoriesEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// CategoriesEdges holds the relations/edges for other nodes in the graph.
+type CategoriesEdges struct {
+	// Books holds the value of the books edge.
+	Books []*Books `json:"books,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// BooksOrErr returns the Books value or an error if the edge
+// was not loaded in eager-loading.
+func (e CategoriesEdges) BooksOrErr() ([]*Books, error) {
+	if e.loadedTypes[0] {
+		return e.Books, nil
+	}
+	return nil, &NotLoadedError{edge: "books"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -26,6 +49,8 @@ func (*Categories) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case categories.FieldID:
 			values[i] = new(sql.NullInt64)
+		case categories.FieldName:
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -46,7 +71,13 @@ func (_m *Categories) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = uint(value.Int64)
+		case categories.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				_m.Name = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +89,11 @@ func (_m *Categories) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Categories) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryBooks queries the "books" edge of the Categories entity.
+func (_m *Categories) QueryBooks() *BooksQuery {
+	return NewCategoriesClient(_m.config).QueryBooks(_m)
 }
 
 // Update returns a builder for updating this Categories.
@@ -82,7 +118,9 @@ func (_m *Categories) Unwrap() *Categories {
 func (_m *Categories) String() string {
 	var builder strings.Builder
 	builder.WriteString("Categories(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("name=")
+	builder.WriteString(_m.Name)
 	builder.WriteByte(')')
 	return builder.String()
 }

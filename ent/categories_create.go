@@ -4,10 +4,12 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 )
 
@@ -16,6 +18,33 @@ type CategoriesCreate struct {
 	config
 	mutation *CategoriesMutation
 	hooks    []Hook
+}
+
+// SetName sets the "name" field.
+func (_c *CategoriesCreate) SetName(v string) *CategoriesCreate {
+	_c.mutation.SetName(v)
+	return _c
+}
+
+// SetID sets the "id" field.
+func (_c *CategoriesCreate) SetID(v uint) *CategoriesCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
+// AddBookIDs adds the "books" edge to the Books entity by IDs.
+func (_c *CategoriesCreate) AddBookIDs(ids ...uint) *CategoriesCreate {
+	_c.mutation.AddBookIDs(ids...)
+	return _c
+}
+
+// AddBooks adds the "books" edges to the Books entity.
+func (_c *CategoriesCreate) AddBooks(v ...*Books) *CategoriesCreate {
+	ids := make([]uint, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddBookIDs(ids...)
 }
 
 // Mutation returns the CategoriesMutation object of the builder.
@@ -52,6 +81,9 @@ func (_c *CategoriesCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *CategoriesCreate) check() error {
+	if _, ok := _c.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Categories.name"`)}
+	}
 	return nil
 }
 
@@ -66,8 +98,10 @@ func (_c *CategoriesCreate) sqlSave(ctx context.Context) (*Categories, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -76,8 +110,32 @@ func (_c *CategoriesCreate) sqlSave(ctx context.Context) (*Categories, error) {
 func (_c *CategoriesCreate) createSpec() (*Categories, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Categories{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(categories.Table, sqlgraph.NewFieldSpec(categories.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(categories.Table, sqlgraph.NewFieldSpec(categories.FieldID, field.TypeUint))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.Name(); ok {
+		_spec.SetField(categories.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if nodes := _c.mutation.BooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   categories.BooksTable,
+			Columns: categories.BooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(books.FieldID, field.TypeUint),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -125,9 +183,9 @@ func (_c *CategoriesCreateBulk) Save(ctx context.Context) ([]*Categories, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = uint(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
