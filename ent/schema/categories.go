@@ -1,6 +1,9 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/field"
+)
 
 // Categories holds the schema definition for the Categories entity.
 type Categories struct {
@@ -9,7 +12,10 @@ type Categories struct {
 
 // Fields of the Categories.
 func (Categories) Fields() []ent.Field {
-	return nil
+	return []ent.Field{
+		field.Uint("id"),
+		field.String("name").Unique(),
+	}
 }
 
 // Edges of the Categories.
