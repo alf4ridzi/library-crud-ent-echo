@@ -26,6 +26,12 @@ func (_c *CategoriesCreate) SetName(v string) *CategoriesCreate {
 	return _c
 }
 
+// SetCode sets the "code" field.
+func (_c *CategoriesCreate) SetCode(v string) *CategoriesCreate {
+	_c.mutation.SetCode(v)
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CategoriesCreate) SetID(v uint) *CategoriesCreate {
 	_c.mutation.SetID(v)
@@ -84,6 +90,9 @@ func (_c *CategoriesCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Categories.name"`)}
 	}
+	if _, ok := _c.mutation.Code(); !ok {
+		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "Categories.code"`)}
+	}
 	return nil
 }
 
@@ -119,6 +128,10 @@ func (_c *CategoriesCreate) createSpec() (*Categories, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(categories.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.Code(); ok {
+		_spec.SetField(categories.FieldCode, field.TypeString, value)
+		_node.Code = value
 	}
 	if nodes := _c.mutation.BooksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

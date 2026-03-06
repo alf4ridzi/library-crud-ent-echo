@@ -1586,6 +1586,7 @@ type CategoriesMutation struct {
 	typ           string
 	id            *uint
 	name          *string
+	code          *string
 	clearedFields map[string]struct{}
 	books         map[uint]struct{}
 	removedbooks  map[uint]struct{}
@@ -1735,6 +1736,42 @@ func (m *CategoriesMutation) ResetName() {
 	m.name = nil
 }
 
+// SetCode sets the "code" field.
+func (m *CategoriesMutation) SetCode(s string) {
+	m.code = &s
+}
+
+// Code returns the value of the "code" field in the mutation.
+func (m *CategoriesMutation) Code() (r string, exists bool) {
+	v := m.code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCode returns the old "code" field's value of the Categories entity.
+// If the Categories object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CategoriesMutation) OldCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+	}
+	return oldValue.Code, nil
+}
+
+// ResetCode resets all changes to the "code" field.
+func (m *CategoriesMutation) ResetCode() {
+	m.code = nil
+}
+
 // AddBookIDs adds the "books" edge to the Books entity by ids.
 func (m *CategoriesMutation) AddBookIDs(ids ...uint) {
 	if m.books == nil {
@@ -1823,9 +1860,12 @@ func (m *CategoriesMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CategoriesMutation) Fields() []string {
-	fields := make([]string, 0, 1)
+	fields := make([]string, 0, 2)
 	if m.name != nil {
 		fields = append(fields, categories.FieldName)
+	}
+	if m.code != nil {
+		fields = append(fields, categories.FieldCode)
 	}
 	return fields
 }
@@ -1837,6 +1877,8 @@ func (m *CategoriesMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case categories.FieldName:
 		return m.Name()
+	case categories.FieldCode:
+		return m.Code()
 	}
 	return nil, false
 }
@@ -1848,6 +1890,8 @@ func (m *CategoriesMutation) OldField(ctx context.Context, name string) (ent.Val
 	switch name {
 	case categories.FieldName:
 		return m.OldName(ctx)
+	case categories.FieldCode:
+		return m.OldCode(ctx)
 	}
 	return nil, fmt.Errorf("unknown Categories field %s", name)
 }
@@ -1863,6 +1907,13 @@ func (m *CategoriesMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case categories.FieldCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCode(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Categories field %s", name)
@@ -1915,6 +1966,9 @@ func (m *CategoriesMutation) ResetField(name string) error {
 	switch name {
 	case categories.FieldName:
 		m.ResetName()
+		return nil
+	case categories.FieldCode:
+		m.ResetCode()
 		return nil
 	}
 	return fmt.Errorf("unknown Categories field %s", name)

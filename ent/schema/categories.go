@@ -15,7 +15,8 @@ type Categories struct {
 func (Categories) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint("id"),
-		field.String("name").Unique(),
+		field.String("name"),
+		field.String("code").Unique(),
 	}
 }
 

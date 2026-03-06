@@ -18,6 +18,8 @@ type Categories struct {
 	ID uint `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Code holds the value of the "code" field.
+	Code string `json:"code,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CategoriesQuery when eager-loading is set.
 	Edges        CategoriesEdges `json:"edges"`
@@ -49,7 +51,7 @@ func (*Categories) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case categories.FieldID:
 			values[i] = new(sql.NullInt64)
-		case categories.FieldName:
+		case categories.FieldName, categories.FieldCode:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -77,6 +79,12 @@ func (_m *Categories) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
+			}
+		case categories.FieldCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field code", values[i])
+			} else if value.Valid {
+				_m.Code = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -121,6 +129,9 @@ func (_m *Categories) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("code=")
+	builder.WriteString(_m.Code)
 	builder.WriteByte(')')
 	return builder.String()
 }

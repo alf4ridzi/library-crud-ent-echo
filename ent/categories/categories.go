@@ -14,6 +14,8 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldCode holds the string denoting the code field in the database.
+	FieldCode = "code"
 	// EdgeBooks holds the string denoting the books edge name in mutations.
 	EdgeBooks = "books"
 	// Table holds the table name of the categories in the database.
@@ -29,6 +31,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
+	FieldCode,
 }
 
 var (
@@ -58,6 +61,11 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByCode orders the results by the code field.
+func ByCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCode, opts...).ToFunc()
 }
 
 // ByBooksCount orders the results by books count.

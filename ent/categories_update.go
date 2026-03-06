@@ -42,6 +42,20 @@ func (_u *CategoriesUpdate) SetNillableName(v *string) *CategoriesUpdate {
 	return _u
 }
 
+// SetCode sets the "code" field.
+func (_u *CategoriesUpdate) SetCode(v string) *CategoriesUpdate {
+	_u.mutation.SetCode(v)
+	return _u
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (_u *CategoriesUpdate) SetNillableCode(v *string) *CategoriesUpdate {
+	if v != nil {
+		_u.SetCode(*v)
+	}
+	return _u
+}
+
 // AddBookIDs adds the "books" edge to the Books entity by IDs.
 func (_u *CategoriesUpdate) AddBookIDs(ids ...uint) *CategoriesUpdate {
 	_u.mutation.AddBookIDs(ids...)
@@ -122,6 +136,9 @@ func (_u *CategoriesUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(categories.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Code(); ok {
+		_spec.SetField(categories.FieldCode, field.TypeString, value)
+	}
 	if _u.mutation.BooksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -197,6 +214,20 @@ func (_u *CategoriesUpdateOne) SetName(v string) *CategoriesUpdateOne {
 func (_u *CategoriesUpdateOne) SetNillableName(v *string) *CategoriesUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
+	}
+	return _u
+}
+
+// SetCode sets the "code" field.
+func (_u *CategoriesUpdateOne) SetCode(v string) *CategoriesUpdateOne {
+	_u.mutation.SetCode(v)
+	return _u
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (_u *CategoriesUpdateOne) SetNillableCode(v *string) *CategoriesUpdateOne {
+	if v != nil {
+		_u.SetCode(*v)
 	}
 	return _u
 }
@@ -310,6 +341,9 @@ func (_u *CategoriesUpdateOne) sqlSave(ctx context.Context) (_node *Categories, 
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(categories.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Code(); ok {
+		_spec.SetField(categories.FieldCode, field.TypeString, value)
 	}
 	if _u.mutation.BooksCleared() {
 		edge := &sqlgraph.EdgeSpec{
