@@ -15,5 +15,8 @@ type Borrowings func(*sql.Selector)
 // Categories is the predicate function for categories builders.
 type Categories func(*sql.Selector)
 
+// Role is the predicate function for role builders.
+type Role func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

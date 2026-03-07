@@ -14,6 +14,7 @@ import (
 )
 
 type AuthService interface {
+	RefreshToken(accessToken string) (*dto.AuthJwt, error)
 	Login(ctx context.Context, req *dto.LoginRequest) (*dto.AuthJwt, error)
 	Register(ctx context.Context, reg *dto.RegisterRequest) error
 }
@@ -24,6 +25,24 @@ type authServiceImpl struct {
 
 func NewAuthService(userRepo repository.UserRepository) AuthService {
 	return &authServiceImpl{userRepo: userRepo}
+}
+
+func (s *authServiceImpl) RefreshToken(accessToken string) (*dto.AuthJwt, error) {
+	claims, err := tokenutil.ClaimsRefreshToken(accessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	generateAccessToken, err := tokenutil.GenerateAccessToken(claims.Subject, time.Duration(1)*time.Hour)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.AuthJwt{
+		Token: dto.AuthJwtResponse{
+			Access: generateAccessToken,
+		},
+	}, nil
 }
 
 func (s *authServiceImpl) Login(ctx context.Context, req *dto.LoginRequest) (*dto.AuthJwt, error) {

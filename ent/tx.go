@@ -18,6 +18,8 @@ type Tx struct {
 	Borrowings *BorrowingsClient
 	// Categories is the client for interacting with the Categories builders.
 	Categories *CategoriesClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -154,6 +156,7 @@ func (tx *Tx) init() {
 	tx.Books = NewBooksClient(tx.config)
 	tx.Borrowings = NewBorrowingsClient(tx.config)
 	tx.Categories = NewCategoriesClient(tx.config)
+	tx.Role = NewRoleClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

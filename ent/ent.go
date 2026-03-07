@@ -15,6 +15,7 @@ import (
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/role"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/user"
 )
 
@@ -79,6 +80,7 @@ func checkColumn(t, c string) error {
 			books.Table:      books.ValidColumn,
 			borrowings.Table: borrowings.ValidColumn,
 			categories.Table: categories.ValidColumn,
+			role.Table:       role.ValidColumn,
 			user.Table:       user.ValidColumn,
 		})
 	})

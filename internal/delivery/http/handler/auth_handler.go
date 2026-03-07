@@ -3,13 +3,11 @@ package handler
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/response"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/helpers"
-	"github.com/alf4ridzi/library-crud-ent-echo/internal/pkg/tokenutil"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
 )
@@ -121,17 +119,7 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 		)
 	}
 
-	claims, err := tokenutil.ClaimsRefreshToken(req.Token)
-	if err != nil {
-		c.Logger().Error(err.Error())
-		return response.Error(
-			c,
-			http.StatusInternalServerError,
-			"internal server error",
-		)
-	}
-
-	accessToken, err := tokenutil.GenerateAccessToken(claims.Subject, time.Duration(1)*time.Hour)
+	token, err := h.authService.RefreshToken(req.Token)
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return response.Error(
@@ -143,10 +131,6 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 
 	return response.Success(
 		c,
-		dto.AuthJwt{
-			Token: dto.AuthJwtResponse{
-				Access: accessToken,
-			},
-		},
+		token,
 	)
 }
