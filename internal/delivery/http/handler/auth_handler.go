@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
@@ -42,7 +41,7 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		)
 	}
 
-	user, err := h.authService.Login(c.Request().Context(), req)
+	token, err := h.authService.Login(c.Request().Context(), req)
 	if err != nil {
 		c.Logger().Error(err.Error())
 		switch {
@@ -67,34 +66,9 @@ func (h *AuthHandler) Login(c *echo.Context) error {
 		}
 	}
 
-	userID := strconv.FormatUint(uint64(user.ID), 10)
-
-	accessToken, err := tokenutil.GenerateAccessToken(userID, time.Duration(1)*time.Hour)
-	if err != nil {
-		return response.Error(
-			c,
-			http.StatusInternalServerError,
-			err.Error(),
-		)
-	}
-
-	refreshToken, err := tokenutil.GenerateRefreshToken(userID, time.Duration(7)*24*time.Hour)
-	if err != nil {
-		return response.Error(
-			c,
-			http.StatusInternalServerError,
-			err.Error(),
-		)
-	}
-
 	return response.Success(
 		c,
-		dto.AuthJwt{
-			Token: dto.AuthJwtResponse{
-				Access:  accessToken,
-				Refresh: refreshToken,
-			},
-		},
+		token,
 	)
 }
 

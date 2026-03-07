@@ -12,12 +12,12 @@ import (
 func TestCreateJwtToken(t *testing.T) {
 	config.LoadEnv()
 
-	accessToken, err := tokenutil.GenerateAccessToken("123", time.Duration(1)*time.Hour)
+	accessToken, err := tokenutil.GenerateAccessToken("123", "admin", time.Duration(1)*time.Hour)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	refreshToken, err := tokenutil.GenerateAccessToken("123", time.Duration(7)*time.Hour)
+	refreshToken, err := tokenutil.GenerateAccessToken("123", "admin", time.Duration(7)*time.Hour)
 	if err != nil {
 		t.Fatal(err)
 	}
