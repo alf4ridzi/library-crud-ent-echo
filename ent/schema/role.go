@@ -1,6 +1,9 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/field"
+)
 
 // Role holds the schema definition for the Role entity.
 type Role struct {
@@ -9,7 +12,9 @@ type Role struct {
 
 // Fields of the Role.
 func (Role) Fields() []ent.Field {
-	return []ent.Field{}
+	return []ent.Field{
+		field.String("name").Unique(),
+	}
 }
 
 // Edges of the Role.
