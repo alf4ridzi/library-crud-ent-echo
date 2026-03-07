@@ -114,16 +114,16 @@ func (_u *BooksUpdate) AddAvailableQuantity(v int) *BooksUpdate {
 	return _u
 }
 
-// SetPublisDate sets the "publis_date" field.
-func (_u *BooksUpdate) SetPublisDate(v time.Time) *BooksUpdate {
-	_u.mutation.SetPublisDate(v)
+// SetPublishDate sets the "publish_date" field.
+func (_u *BooksUpdate) SetPublishDate(v time.Time) *BooksUpdate {
+	_u.mutation.SetPublishDate(v)
 	return _u
 }
 
-// SetNillablePublisDate sets the "publis_date" field if the given value is not nil.
-func (_u *BooksUpdate) SetNillablePublisDate(v *time.Time) *BooksUpdate {
+// SetNillablePublishDate sets the "publish_date" field if the given value is not nil.
+func (_u *BooksUpdate) SetNillablePublishDate(v *time.Time) *BooksUpdate {
 	if v != nil {
-		_u.SetPublisDate(*v)
+		_u.SetPublishDate(*v)
 	}
 	return _u
 }
@@ -291,8 +291,8 @@ func (_u *BooksUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedAvailableQuantity(); ok {
 		_spec.AddField(books.FieldAvailableQuantity, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.PublisDate(); ok {
-		_spec.SetField(books.FieldPublisDate, field.TypeTime, value)
+	if value, ok := _u.mutation.PublishDate(); ok {
+		_spec.SetField(books.FieldPublishDate, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(books.FieldCreatedAt, field.TypeTime, value)
@@ -494,16 +494,16 @@ func (_u *BooksUpdateOne) AddAvailableQuantity(v int) *BooksUpdateOne {
 	return _u
 }
 
-// SetPublisDate sets the "publis_date" field.
-func (_u *BooksUpdateOne) SetPublisDate(v time.Time) *BooksUpdateOne {
-	_u.mutation.SetPublisDate(v)
+// SetPublishDate sets the "publish_date" field.
+func (_u *BooksUpdateOne) SetPublishDate(v time.Time) *BooksUpdateOne {
+	_u.mutation.SetPublishDate(v)
 	return _u
 }
 
-// SetNillablePublisDate sets the "publis_date" field if the given value is not nil.
-func (_u *BooksUpdateOne) SetNillablePublisDate(v *time.Time) *BooksUpdateOne {
+// SetNillablePublishDate sets the "publish_date" field if the given value is not nil.
+func (_u *BooksUpdateOne) SetNillablePublishDate(v *time.Time) *BooksUpdateOne {
 	if v != nil {
-		_u.SetPublisDate(*v)
+		_u.SetPublishDate(*v)
 	}
 	return _u
 }
@@ -701,8 +701,8 @@ func (_u *BooksUpdateOne) sqlSave(ctx context.Context) (_node *Books, err error)
 	if value, ok := _u.mutation.AddedAvailableQuantity(); ok {
 		_spec.AddField(books.FieldAvailableQuantity, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.PublisDate(); ok {
-		_spec.SetField(books.FieldPublisDate, field.TypeTime, value)
+	if value, ok := _u.mutation.PublishDate(); ok {
+		_spec.SetField(books.FieldPublishDate, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(books.FieldCreatedAt, field.TypeTime, value)

@@ -27,8 +27,8 @@ type Books struct {
 	Quantity int `json:"quantity,omitempty"`
 	// AvailableQuantity holds the value of the "available_quantity" field.
 	AvailableQuantity int `json:"available_quantity,omitempty"`
-	// PublisDate holds the value of the "publis_date" field.
-	PublisDate time.Time `json:"publis_date,omitempty"`
+	// PublishDate holds the value of the "publish_date" field.
+	PublishDate time.Time `json:"publish_date,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -77,7 +77,7 @@ func (*Books) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case books.FieldAuthor, books.FieldDescription, books.FieldTitle:
 			values[i] = new(sql.NullString)
-		case books.FieldPublisDate, books.FieldCreatedAt, books.FieldUpdatedAt:
+		case books.FieldPublishDate, books.FieldCreatedAt, books.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -130,11 +130,11 @@ func (_m *Books) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.AvailableQuantity = int(value.Int64)
 			}
-		case books.FieldPublisDate:
+		case books.FieldPublishDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field publis_date", values[i])
+				return fmt.Errorf("unexpected type %T for field publish_date", values[i])
 			} else if value.Valid {
-				_m.PublisDate = value.Time
+				_m.PublishDate = value.Time
 			}
 		case books.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -209,8 +209,8 @@ func (_m *Books) String() string {
 	builder.WriteString("available_quantity=")
 	builder.WriteString(fmt.Sprintf("%v", _m.AvailableQuantity))
 	builder.WriteString(", ")
-	builder.WriteString("publis_date=")
-	builder.WriteString(_m.PublisDate.Format(time.ANSIC))
+	builder.WriteString("publish_date=")
+	builder.WriteString(_m.PublishDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

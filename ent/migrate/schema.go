@@ -16,7 +16,7 @@ var (
 		{Name: "title", Type: field.TypeString},
 		{Name: "quantity", Type: field.TypeInt},
 		{Name: "available_quantity", Type: field.TypeInt},
-		{Name: "publis_date", Type: field.TypeTime},
+		{Name: "publish_date", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

@@ -22,7 +22,7 @@ func (Books) Fields() []ent.Field {
 		field.String("title"),
 		field.Int("quantity"),
 		field.Int("available_quantity"),
-		field.Time("publis_date"),
+		field.Time("publish_date"),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}

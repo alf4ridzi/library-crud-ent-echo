@@ -24,8 +24,8 @@ const (
 	FieldQuantity = "quantity"
 	// FieldAvailableQuantity holds the string denoting the available_quantity field in the database.
 	FieldAvailableQuantity = "available_quantity"
-	// FieldPublisDate holds the string denoting the publis_date field in the database.
-	FieldPublisDate = "publis_date"
+	// FieldPublishDate holds the string denoting the publish_date field in the database.
+	FieldPublishDate = "publish_date"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -58,7 +58,7 @@ var Columns = []string{
 	FieldTitle,
 	FieldQuantity,
 	FieldAvailableQuantity,
-	FieldPublisDate,
+	FieldPublishDate,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -121,9 +121,9 @@ func ByAvailableQuantity(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvailableQuantity, opts...).ToFunc()
 }
 
-// ByPublisDate orders the results by the publis_date field.
-func ByPublisDate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPublisDate, opts...).ToFunc()
+// ByPublishDate orders the results by the publish_date field.
+func ByPublishDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPublishDate, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

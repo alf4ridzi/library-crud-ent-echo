@@ -46,7 +46,7 @@ type BooksMutation struct {
 	addquantity           *int
 	available_quantity    *int
 	addavailable_quantity *int
-	publis_date           *time.Time
+	publish_date          *time.Time
 	created_at            *time.Time
 	updated_at            *time.Time
 	clearedFields         map[string]struct{}
@@ -385,40 +385,40 @@ func (m *BooksMutation) ResetAvailableQuantity() {
 	m.addavailable_quantity = nil
 }
 
-// SetPublisDate sets the "publis_date" field.
-func (m *BooksMutation) SetPublisDate(t time.Time) {
-	m.publis_date = &t
+// SetPublishDate sets the "publish_date" field.
+func (m *BooksMutation) SetPublishDate(t time.Time) {
+	m.publish_date = &t
 }
 
-// PublisDate returns the value of the "publis_date" field in the mutation.
-func (m *BooksMutation) PublisDate() (r time.Time, exists bool) {
-	v := m.publis_date
+// PublishDate returns the value of the "publish_date" field in the mutation.
+func (m *BooksMutation) PublishDate() (r time.Time, exists bool) {
+	v := m.publish_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPublisDate returns the old "publis_date" field's value of the Books entity.
+// OldPublishDate returns the old "publish_date" field's value of the Books entity.
 // If the Books object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BooksMutation) OldPublisDate(ctx context.Context) (v time.Time, err error) {
+func (m *BooksMutation) OldPublishDate(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPublisDate is only allowed on UpdateOne operations")
+		return v, errors.New("OldPublishDate is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPublisDate requires an ID field in the mutation")
+		return v, errors.New("OldPublishDate requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPublisDate: %w", err)
+		return v, fmt.Errorf("querying old value for OldPublishDate: %w", err)
 	}
-	return oldValue.PublisDate, nil
+	return oldValue.PublishDate, nil
 }
 
-// ResetPublisDate resets all changes to the "publis_date" field.
-func (m *BooksMutation) ResetPublisDate() {
-	m.publis_date = nil
+// ResetPublishDate resets all changes to the "publish_date" field.
+func (m *BooksMutation) ResetPublishDate() {
+	m.publish_date = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -651,8 +651,8 @@ func (m *BooksMutation) Fields() []string {
 	if m.available_quantity != nil {
 		fields = append(fields, books.FieldAvailableQuantity)
 	}
-	if m.publis_date != nil {
-		fields = append(fields, books.FieldPublisDate)
+	if m.publish_date != nil {
+		fields = append(fields, books.FieldPublishDate)
 	}
 	if m.created_at != nil {
 		fields = append(fields, books.FieldCreatedAt)
@@ -678,8 +678,8 @@ func (m *BooksMutation) Field(name string) (ent.Value, bool) {
 		return m.Quantity()
 	case books.FieldAvailableQuantity:
 		return m.AvailableQuantity()
-	case books.FieldPublisDate:
-		return m.PublisDate()
+	case books.FieldPublishDate:
+		return m.PublishDate()
 	case books.FieldCreatedAt:
 		return m.CreatedAt()
 	case books.FieldUpdatedAt:
@@ -703,8 +703,8 @@ func (m *BooksMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldQuantity(ctx)
 	case books.FieldAvailableQuantity:
 		return m.OldAvailableQuantity(ctx)
-	case books.FieldPublisDate:
-		return m.OldPublisDate(ctx)
+	case books.FieldPublishDate:
+		return m.OldPublishDate(ctx)
 	case books.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case books.FieldUpdatedAt:
@@ -753,12 +753,12 @@ func (m *BooksMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAvailableQuantity(v)
 		return nil
-	case books.FieldPublisDate:
+	case books.FieldPublishDate:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPublisDate(v)
+		m.SetPublishDate(v)
 		return nil
 	case books.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -865,8 +865,8 @@ func (m *BooksMutation) ResetField(name string) error {
 	case books.FieldAvailableQuantity:
 		m.ResetAvailableQuantity()
 		return nil
-	case books.FieldPublisDate:
-		m.ResetPublisDate()
+	case books.FieldPublishDate:
+		m.ResetPublishDate()
 		return nil
 	case books.FieldCreatedAt:
 		m.ResetCreatedAt()

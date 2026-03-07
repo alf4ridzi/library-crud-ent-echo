@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
+	entCategories "github.com/alf4ridzi/library-crud-ent-echo/ent/categories"
 )
 
 var categories = []ent.Categories{
@@ -21,13 +22,33 @@ var categories = []ent.Categories{
 }
 
 func CategorySeed(client *ent.Client) {
-	for _, category := range categories {
-		_, err := client.Categories.Create().
-			SetName(category.Name).
-			SetCode(category.Code).Save(context.Background())
+	var categoriesCreate []*ent.CategoriesCreate
 
+	for _, category := range categories {
+		c := category
+
+		// check if categories exist
+		cat, err := client.Categories.Query().Where(
+			entCategories.Code(c.Code),
+		).First(context.Background())
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		if cat != nil {
+			continue
+		}
+
+		create := client.Categories.
+			Create().
+			SetName(c.Name).
+			SetCode(c.Code)
+
+		categoriesCreate = append(categoriesCreate, create)
+	}
+
+	_, err := client.Categories.CreateBulk(categoriesCreate...).Save(context.Background())
+	if err != nil {
+		log.Fatal(err)
 	}
 }

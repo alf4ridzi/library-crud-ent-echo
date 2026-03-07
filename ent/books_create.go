@@ -52,9 +52,9 @@ func (_c *BooksCreate) SetAvailableQuantity(v int) *BooksCreate {
 	return _c
 }
 
-// SetPublisDate sets the "publis_date" field.
-func (_c *BooksCreate) SetPublisDate(v time.Time) *BooksCreate {
-	_c.mutation.SetPublisDate(v)
+// SetPublishDate sets the "publish_date" field.
+func (_c *BooksCreate) SetPublishDate(v time.Time) *BooksCreate {
+	_c.mutation.SetPublishDate(v)
 	return _c
 }
 
@@ -184,8 +184,8 @@ func (_c *BooksCreate) check() error {
 	if _, ok := _c.mutation.AvailableQuantity(); !ok {
 		return &ValidationError{Name: "available_quantity", err: errors.New(`ent: missing required field "Books.available_quantity"`)}
 	}
-	if _, ok := _c.mutation.PublisDate(); !ok {
-		return &ValidationError{Name: "publis_date", err: errors.New(`ent: missing required field "Books.publis_date"`)}
+	if _, ok := _c.mutation.PublishDate(); !ok {
+		return &ValidationError{Name: "publish_date", err: errors.New(`ent: missing required field "Books.publish_date"`)}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Books.created_at"`)}
@@ -245,9 +245,9 @@ func (_c *BooksCreate) createSpec() (*Books, *sqlgraph.CreateSpec) {
 		_spec.SetField(books.FieldAvailableQuantity, field.TypeInt, value)
 		_node.AvailableQuantity = value
 	}
-	if value, ok := _c.mutation.PublisDate(); ok {
-		_spec.SetField(books.FieldPublisDate, field.TypeTime, value)
-		_node.PublisDate = value
+	if value, ok := _c.mutation.PublishDate(); ok {
+		_spec.SetField(books.FieldPublishDate, field.TypeTime, value)
+		_node.PublishDate = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(books.FieldCreatedAt, field.TypeTime, value)

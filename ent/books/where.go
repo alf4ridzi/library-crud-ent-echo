@@ -80,9 +80,9 @@ func AvailableQuantity(v int) predicate.Books {
 	return predicate.Books(sql.FieldEQ(FieldAvailableQuantity, v))
 }
 
-// PublisDate applies equality check predicate on the "publis_date" field. It's identical to PublisDateEQ.
-func PublisDate(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldEQ(FieldPublisDate, v))
+// PublishDate applies equality check predicate on the "publish_date" field. It's identical to PublishDateEQ.
+func PublishDate(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldEQ(FieldPublishDate, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -370,44 +370,44 @@ func AvailableQuantityLTE(v int) predicate.Books {
 	return predicate.Books(sql.FieldLTE(FieldAvailableQuantity, v))
 }
 
-// PublisDateEQ applies the EQ predicate on the "publis_date" field.
-func PublisDateEQ(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldEQ(FieldPublisDate, v))
+// PublishDateEQ applies the EQ predicate on the "publish_date" field.
+func PublishDateEQ(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldEQ(FieldPublishDate, v))
 }
 
-// PublisDateNEQ applies the NEQ predicate on the "publis_date" field.
-func PublisDateNEQ(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldNEQ(FieldPublisDate, v))
+// PublishDateNEQ applies the NEQ predicate on the "publish_date" field.
+func PublishDateNEQ(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldNEQ(FieldPublishDate, v))
 }
 
-// PublisDateIn applies the In predicate on the "publis_date" field.
-func PublisDateIn(vs ...time.Time) predicate.Books {
-	return predicate.Books(sql.FieldIn(FieldPublisDate, vs...))
+// PublishDateIn applies the In predicate on the "publish_date" field.
+func PublishDateIn(vs ...time.Time) predicate.Books {
+	return predicate.Books(sql.FieldIn(FieldPublishDate, vs...))
 }
 
-// PublisDateNotIn applies the NotIn predicate on the "publis_date" field.
-func PublisDateNotIn(vs ...time.Time) predicate.Books {
-	return predicate.Books(sql.FieldNotIn(FieldPublisDate, vs...))
+// PublishDateNotIn applies the NotIn predicate on the "publish_date" field.
+func PublishDateNotIn(vs ...time.Time) predicate.Books {
+	return predicate.Books(sql.FieldNotIn(FieldPublishDate, vs...))
 }
 
-// PublisDateGT applies the GT predicate on the "publis_date" field.
-func PublisDateGT(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldGT(FieldPublisDate, v))
+// PublishDateGT applies the GT predicate on the "publish_date" field.
+func PublishDateGT(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldGT(FieldPublishDate, v))
 }
 
-// PublisDateGTE applies the GTE predicate on the "publis_date" field.
-func PublisDateGTE(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldGTE(FieldPublisDate, v))
+// PublishDateGTE applies the GTE predicate on the "publish_date" field.
+func PublishDateGTE(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldGTE(FieldPublishDate, v))
 }
 
-// PublisDateLT applies the LT predicate on the "publis_date" field.
-func PublisDateLT(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldLT(FieldPublisDate, v))
+// PublishDateLT applies the LT predicate on the "publish_date" field.
+func PublishDateLT(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldLT(FieldPublishDate, v))
 }
 
-// PublisDateLTE applies the LTE predicate on the "publis_date" field.
-func PublisDateLTE(v time.Time) predicate.Books {
-	return predicate.Books(sql.FieldLTE(FieldPublisDate, v))
+// PublishDateLTE applies the LTE predicate on the "publish_date" field.
+func PublishDateLTE(v time.Time) predicate.Books {
+	return predicate.Books(sql.FieldLTE(FieldPublishDate, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
