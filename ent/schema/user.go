@@ -33,6 +33,7 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("borrowings", Borrowings.Type).Ref("user"),
+		edge.To("role", Role.Type).Unique(),
 	}
 }
 
