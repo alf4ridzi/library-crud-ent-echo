@@ -14,7 +14,7 @@ import (
 )
 
 type AuthService interface {
-	RefreshToken(accessToken string) (*dto.AuthJwt, error)
+	RefreshToken(ctx context.Context, accessToken string) (*dto.AuthJwt, error)
 	Login(ctx context.Context, req *dto.LoginRequest) (*dto.AuthJwt, error)
 	Register(ctx context.Context, reg *dto.RegisterRequest) error
 }
@@ -27,13 +27,25 @@ func NewAuthService(userRepo repository.UserRepository) AuthService {
 	return &authServiceImpl{userRepo: userRepo}
 }
 
-func (s *authServiceImpl) RefreshToken(accessToken string) (*dto.AuthJwt, error) {
+func (s *authServiceImpl) RefreshToken(ctx context.Context, accessToken string) (*dto.AuthJwt, error) {
 	claims, err := tokenutil.ClaimsRefreshToken(accessToken)
 	if err != nil {
 		return nil, err
 	}
 
-	generateAccessToken, err := tokenutil.GenerateAccessToken(claims.Subject, time.Duration(1)*time.Hour)
+	userID, err := strconv.ParseUint(claims.Subject, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.userRepo.FindByID(ctx, uint(userID))
+	if err != nil {
+		return nil, err
+	}
+
+	userIDString := strconv.FormatUint(uint64(user.ID), 10)
+
+	generateAccessToken, err := tokenutil.GenerateAccessToken(userIDString, user.Edges.Role.Name, time.Duration(1)*time.Hour)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +81,7 @@ func (s *authServiceImpl) Login(ctx context.Context, req *dto.LoginRequest) (*dt
 
 	userID := strconv.FormatUint(uint64(user.ID), 10)
 
-	accessToken, err := tokenutil.GenerateAccessToken(userID, time.Duration(1)*time.Hour)
+	accessToken, err := tokenutil.GenerateAccessToken(userID, user.Edges.Role.Name, time.Duration(1)*time.Hour)
 	if err != nil {
 		return nil, err
 	}

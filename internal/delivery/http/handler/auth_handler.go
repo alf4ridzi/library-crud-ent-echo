@@ -119,7 +119,7 @@ func (h *AuthHandler) Refresh(c *echo.Context) error {
 		)
 	}
 
-	token, err := h.authService.RefreshToken(req.Token)
+	token, err := h.authService.RefreshToken(c.Request().Context(), req.Token)
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return response.Error(
