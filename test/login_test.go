@@ -26,7 +26,7 @@ func TestServiceLogin(t *testing.T) {
 
 	req := new(dto.LoginRequest)
 
-	req.Identifier = "GMZyTUj@ZYkNirQ.net"
+	req.Identifier = "RUySuk2222q@XIyKUMJ.biz"
 	req.Password = "user12345"
 
 	user, err := authService.Login(context.Background(), req)

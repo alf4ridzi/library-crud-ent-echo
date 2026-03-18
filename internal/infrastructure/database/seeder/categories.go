@@ -31,8 +31,9 @@ func CategorySeed(client *ent.Client) {
 		cat, err := client.Categories.Query().Where(
 			entCategories.Code(c.Code),
 		).First(context.Background())
-		if err != nil {
-			log.Fatal(err)
+
+		if !ent.IsNotFound(err) {
+			continue
 		}
 
 		if cat != nil {

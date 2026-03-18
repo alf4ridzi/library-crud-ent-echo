@@ -36,13 +36,15 @@ func (r *userRepositoryImpl) FindByID(ctx context.Context, id uint) (*ent.User, 
 func (r *userRepositoryImpl) FindByEmail(ctx context.Context, email string) (*ent.User, error) {
 	return r.DB.User.Query().Where(
 		user.Email(email),
-	).First(ctx)
+	).WithRole().
+		First(ctx)
 }
 
 func (r *userRepositoryImpl) FindByUsername(ctx context.Context, username string) (*ent.User, error) {
 	return r.DB.User.Query().Where(
 		user.Username(username),
-	).First(ctx)
+	).WithRole().
+		First(ctx)
 }
 
 func (r *userRepositoryImpl) FindByUsernameOrEmail(ctx context.Context, username *string, email *string) (*ent.User, error) {
