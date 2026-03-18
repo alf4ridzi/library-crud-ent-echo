@@ -53,7 +53,7 @@ func (s *userServiceImpl) UpdateUser(ctx context.Context, id any, req *dto.UserU
 		user.Username = *req.Username
 	}
 
-	err = s.userRepo.UpdateByID(ctx, user)
+	err = s.userRepo.UpdateByUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}

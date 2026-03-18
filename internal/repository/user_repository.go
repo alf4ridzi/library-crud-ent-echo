@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	UpdateByID(ctx context.Context, user *ent.User) error
+	UpdateByUser(ctx context.Context, user *ent.User) error
 	FindByEmail(ctx context.Context, email string) (*ent.User, error)
 	FindByUsername(ctx context.Context, username string) (*ent.User, error)
 	FindByUsernameOrEmail(ctx context.Context, username *string, email *string) (*ent.User, error)
@@ -25,8 +25,12 @@ func NewUserRepository(client *ent.Client) UserRepository {
 	return &userRepositoryImpl{DB: client}
 }
 
-func (r *userRepositoryImpl) UpdateByID(ctx context.Context, user *ent.User) error {
-	return r.DB.User.UpdateOne(user).Exec(ctx)
+func (r *userRepositoryImpl) UpdateByUser(ctx context.Context, user *ent.User) error {
+	return r.DB.User.UpdateOne(user).
+		SetEmail(user.Email).
+		SetUsername(user.Username).
+		SetName(*user.Name).
+		Exec(ctx)
 }
 
 func (r *userRepositoryImpl) FindByID(ctx context.Context, id uint) (*ent.User, error) {
