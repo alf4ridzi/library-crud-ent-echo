@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
@@ -39,7 +40,31 @@ func (h *UserHandler) ChangeUserPassword(c *echo.Context) error {
 		)
 	}
 
-	return nil
+	userID := c.Get("user_id")
+
+	err := h.userService.ChangeUserPassword(c.Request().Context(), userID, req)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrInvalidPassword):
+			return response.Fail(
+				c,
+				http.StatusUnauthorized,
+				response.Message("password is incorrect"),
+			)
+		default:
+			c.Logger().Error(err.Error())
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
+	}
+
+	return response.Success(
+		c,
+		response.Message("success change password"),
+	)
 }
 
 func (h *UserHandler) UpdateUser(c *echo.Context) error {
