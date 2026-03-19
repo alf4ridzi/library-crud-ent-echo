@@ -34,6 +34,6 @@ func (User) Edges() []ent.Edge {
 
 func (User) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hook.On(hook.HashPasswordHook(), ent.OpCreate),
+		hook.On(hook.HashPasswordHook(), ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne),
 	}
 }

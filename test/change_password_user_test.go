@@ -33,7 +33,7 @@ func TestChangePasswordUser(t *testing.T) {
 		NewPassword: "alfaridzi123",
 	}
 
-	err = userService.ChangeUserPassword(ctx, "2", pw)
+	err = userService.ChangeUserPassword(ctx, "3", pw)
 	if err != nil {
 		t.Fatal(err)
 	}
