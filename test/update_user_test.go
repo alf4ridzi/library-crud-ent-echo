@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/config"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/infrastructure/database"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/repository"
@@ -22,12 +21,10 @@ func TestUpdateUser(t *testing.T) {
 
 	userRepo := repository.NewUserRepository(db)
 
-	name := "test edit"
+	user, err := userRepo.FindByID(context.Background(), 1)
 
-	user := &ent.User{
-		ID:   1,
-		Name: &name,
-	}
+	user.Email = "test@gmail.com"
+	user.Username = "YMWrSEB"
 
 	err = userRepo.UpdateByUser(context.Background(), user)
 	if err != nil {
