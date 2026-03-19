@@ -3,8 +3,10 @@ package handler
 import (
 	"net/http"
 
+	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/response"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/helpers"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/service"
 	"github.com/labstack/echo/v5"
 )
@@ -41,12 +43,21 @@ func (h *UserHandler) UpdateUser(c *echo.Context) error {
 
 	user, err := h.userService.UpdateUser(c.Request().Context(), userID, req)
 	if err != nil {
-		c.Logger().Error(err.Error())
-		return response.Error(
-			c,
-			http.StatusInternalServerError,
-			"internal server error",
-		)
+		switch {
+		case ent.IsConstraintError(err):
+			return response.Fail(
+				c,
+				http.StatusConflict,
+				helpers.ParseConstraintError(err),
+			)
+		default:
+			c.Logger().Error(err.Error())
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
 	}
 
 	return response.Success(
