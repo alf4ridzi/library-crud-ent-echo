@@ -6,10 +6,12 @@ import (
 	"strconv"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
+	"github.com/alf4ridzi/library-crud-ent-echo/internal/pkg/cryptoutil"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/repository"
 )
 
 type UserService interface {
+	ChangeUserPassword(ctx context.Context, id any, req *dto.UserChangePasswordRequest) error
 	UpdateUser(ctx context.Context, id any, req *dto.UserUpdateRequest) (*dto.UserResponse, error)
 	GetByID(ctx context.Context, id any) (*dto.UserResponse, error)
 }
@@ -20,6 +22,37 @@ type userServiceImpl struct {
 
 func NewUserService(userRepo repository.UserRepository) UserService {
 	return &userServiceImpl{userRepo: userRepo}
+}
+
+func (s *userServiceImpl) ChangeUserPassword(ctx context.Context, id any, req *dto.UserChangePasswordRequest) error {
+	userIDString, ok := id.(string)
+	if !ok {
+		return errors.New("id is not string")
+	}
+
+	userID, err := strconv.ParseUint(userIDString, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	userIDUInt := uint(userID)
+
+	user, err := s.userRepo.FindByID(ctx, userIDUInt)
+	if err != nil {
+		return err
+	}
+
+	if !cryptoutil.ValidatePassword(user.Password, req.OldPassword) {
+		return ErrInvalidPassword
+	}
+
+	user.Password = req.NewPassword
+
+	if err := s.userRepo.UpdateUserPassword(ctx, user); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *userServiceImpl) UpdateUser(ctx context.Context, id any, req *dto.UserUpdateRequest) (*dto.UserResponse, error) {

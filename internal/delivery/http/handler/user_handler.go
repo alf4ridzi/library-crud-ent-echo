@@ -19,6 +19,29 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 	return &UserHandler{userService: userService}
 }
 
+func (h *UserHandler) ChangeUserPassword(c *echo.Context) error {
+	req := new(dto.UserChangePasswordRequest)
+
+	if err := c.Bind(req); err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	if err := c.Validate(req); err != nil {
+		return response.Fail(
+			c,
+			http.StatusBadRequest,
+			response.ValidationErrors(err),
+		)
+	}
+
+	return nil
+}
+
 func (h *UserHandler) UpdateUser(c *echo.Context) error {
 	req := new(dto.UserUpdateRequest)
 

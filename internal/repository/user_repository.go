@@ -9,6 +9,7 @@ import (
 )
 
 type UserRepository interface {
+	UpdateUserPassword(ctx context.Context, user *ent.User) error
 	UpdateByUser(ctx context.Context, user *ent.User) error
 	FindByEmail(ctx context.Context, email string) (*ent.User, error)
 	FindByUsername(ctx context.Context, username string) (*ent.User, error)
@@ -23,6 +24,12 @@ type userRepositoryImpl struct {
 
 func NewUserRepository(client *ent.Client) UserRepository {
 	return &userRepositoryImpl{DB: client}
+}
+
+func (r *userRepositoryImpl) UpdateUserPassword(ctx context.Context, user *ent.User) error {
+	return r.DB.User.UpdateOne(user).
+		SetPassword(user.Password).
+		Exec(ctx)
 }
 
 func (r *userRepositoryImpl) UpdateByUser(ctx context.Context, user *ent.User) error {

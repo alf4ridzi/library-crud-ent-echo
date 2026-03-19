@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/hook"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/config"
 )
 
@@ -22,6 +23,8 @@ func NewMysqlEnt() (*ent.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	client.User.Use(hook.DefaultRoleHook(client))
 
 	return client, nil
 }
