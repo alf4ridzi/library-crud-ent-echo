@@ -8,15 +8,18 @@ import (
 type Routes struct {
 	AuthRoute *AuthRoute
 	UserRoute *UserRoute
+	BookRoute *BookRoute
 }
 
 func NewRoutes(
 	authRoute *AuthRoute,
 	userRoute *UserRoute,
+	bookRoute *BookRoute,
 ) *Routes {
 	return &Routes{
 		AuthRoute: authRoute,
 		UserRoute: userRoute,
+		BookRoute: bookRoute,
 	}
 }
 
@@ -27,4 +30,5 @@ func (r *Routes) Register(router *echo.Echo) {
 	r.AuthRoute.Register(api)
 	api.Use(middleware.JwtAuth)
 	r.UserRoute.Register(api)
+	r.BookRoute.Register(api)
 }
