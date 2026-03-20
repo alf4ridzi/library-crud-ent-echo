@@ -39,5 +39,18 @@ func (h *BookHandler) Store(c *echo.Context) error {
 		)
 	}
 
-	return nil
+	book, err := h.bookService.CreateNewBook(c.Request().Context(), req)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	return response.Success(
+		c,
+		book,
+	)
 }
