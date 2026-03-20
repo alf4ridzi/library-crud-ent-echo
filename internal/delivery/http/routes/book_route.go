@@ -16,5 +16,6 @@ func NewBookRoute(handler *handler.BookHandler) *BookRoute {
 }
 
 func (r *BookRoute) Register(rg *echo.Group) {
-
+	books := rg.Group("/books")
+	books.POST("", r.Handler.Store)
 }

@@ -7,6 +7,7 @@ import (
 )
 
 type BookRepository interface {
+	Create(ctx context.Context, book *ent.Books, categoryIDs []uint) (*ent.Books, error)
 }
 
 type bookRepositoryImpl struct {
@@ -17,7 +18,7 @@ func NewBookRepository(client *ent.Client) BookRepository {
 	return &bookRepositoryImpl{DB: client}
 }
 
-func (r *bookRepositoryImpl) Create(ctx context.Context, book *ent.Books) error {
+func (r *bookRepositoryImpl) Create(ctx context.Context, book *ent.Books, categoryIDs []uint) (*ent.Books, error) {
 	return r.DB.Books.Create().
 		SetAuthor(book.Author).
 		SetDescription(book.Description).
@@ -25,5 +26,6 @@ func (r *bookRepositoryImpl) Create(ctx context.Context, book *ent.Books) error 
 		SetQuantity(book.Quantity).
 		SetAvailableQuantity(book.AvailableQuantity).
 		SetPublishDate(book.PublishDate).
-		Exec(ctx)
+		AddCategoryIDs(categoryIDs...).
+		Save(ctx)
 }

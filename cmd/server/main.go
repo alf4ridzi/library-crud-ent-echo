@@ -75,7 +75,12 @@ func main() {
 	userHandler := handler.NewUserHandler(userService)
 	userRoute := routes.NewUserRoute(userHandler)
 
-	r := routes.NewRoutes(authRoute, userRoute)
+	bookRepo := repository.NewBookRepository(client)
+	bookService := service.NewBookService(bookRepo)
+	bookHandler := handler.NewBookHandler(bookService)
+	bookRoute := routes.NewBookRoute(bookHandler)
+
+	r := routes.NewRoutes(authRoute, userRoute, bookRoute)
 
 	r.Register(e)
 
