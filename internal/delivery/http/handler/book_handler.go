@@ -19,6 +19,23 @@ func NewBookHandler(bookService service.BookService) *BookHandler {
 	}
 }
 
+func (h *BookHandler) GetAllBooks(c *echo.Context) error {
+	books, err := h.bookService.GetAllBooks(c.Request().Context())
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	return response.Success(
+		c,
+		books,
+	)
+}
+
 func (h *BookHandler) Store(c *echo.Context) error {
 	req := new(dto.CreateNewBookRequest)
 

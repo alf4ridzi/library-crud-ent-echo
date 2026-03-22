@@ -7,6 +7,7 @@ import (
 )
 
 type BookRepository interface {
+	FindAll(ctx context.Context) ([]*ent.Books, error)
 	Create(ctx context.Context, book *ent.Books, categoryIDs []uint) (*ent.Books, error)
 }
 
@@ -16,6 +17,13 @@ type bookRepositoryImpl struct {
 
 func NewBookRepository(client *ent.Client) BookRepository {
 	return &bookRepositoryImpl{DB: client}
+}
+
+func (r *bookRepositoryImpl) FindAll(ctx context.Context) ([]*ent.Books, error) {
+	return r.DB.Books.Query().
+		WithBorrowings().
+		WithCategories().
+		All(ctx)
 }
 
 func (r *bookRepositoryImpl) Create(ctx context.Context, book *ent.Books, categoryIDs []uint) (*ent.Books, error) {

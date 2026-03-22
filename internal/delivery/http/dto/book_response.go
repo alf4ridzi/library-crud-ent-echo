@@ -7,13 +7,14 @@ import (
 )
 
 type BookResponse struct {
-	Author            string            `json:"author" validate:"required"`
-	Description       string            `json:"description" validate:"required"`
-	Title             string            `json:"title" validate:"required"`
-	Quantity          int               `json:"quantity" validate:"required"`
-	AvailableQuantity int               `json:"available_quantity" validate:"required"`
-	PublishDate       time.Time         `json:"publish_date" validate:"required"`
-	Categories        []*ent.Categories `json:"category_ids" validate:"required,min=1"`
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	Author            string            `json:"author"`
+	Description       string            `json:"description"`
+	Title             string            `json:"title"`
+	Quantity          int               `json:"quantity"`
+	AvailableQuantity int               `json:"available_quantity"`
+	PublishDate       time.Time         `json:"publish_date"`
+	Categories        []*ent.Categories `json:"categories"`
+	Borrowings        []*ent.Borrowings `json:"borrowings"`
+	CreatedAt         time.Time         `json:"created_at"`
+	UpdatedAt         time.Time         `json:"updated_at"`
 }

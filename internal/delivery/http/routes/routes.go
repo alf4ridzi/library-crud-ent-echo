@@ -28,7 +28,6 @@ func (r *Routes) Register(router *echo.Echo) {
 
 	api.Use(middleware.TimeoutMiddleware)
 	r.AuthRoute.Register(api)
-	api.Use(middleware.JwtAuth)
 	r.UserRoute.Register(api)
 	r.BookRoute.Register(api)
 }
