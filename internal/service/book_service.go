@@ -9,6 +9,7 @@ import (
 )
 
 type BookService interface {
+	DeleteBook(ctx context.Context, id uint) error
 	GetAllBooks(ctx context.Context) ([]dto.BookResponse, error)
 	CreateNewBook(ctx context.Context, req *dto.CreateNewBookRequest) (*dto.BookResponse, error)
 }
@@ -21,6 +22,10 @@ func NewBookService(
 	bookRepo repository.BookRepository,
 ) BookService {
 	return &bookServiceImpl{bookRepo: bookRepo}
+}
+
+func (s *bookServiceImpl) DeleteBook(ctx context.Context, id uint) error {
+	return s.bookRepo.DeleteByID(ctx, id)
 }
 
 func (s *bookServiceImpl) GetAllBooks(ctx context.Context) ([]dto.BookResponse, error) {
