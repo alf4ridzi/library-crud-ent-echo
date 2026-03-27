@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
@@ -9,7 +10,7 @@ import (
 )
 
 type BookService interface {
-	DeleteBook(ctx context.Context, id uint) error
+	DeleteBook(ctx context.Context, id string) error
 	GetAllBooks(ctx context.Context) ([]dto.BookResponse, error)
 	CreateNewBook(ctx context.Context, req *dto.CreateNewBookRequest) (*dto.BookResponse, error)
 }
@@ -24,8 +25,13 @@ func NewBookService(
 	return &bookServiceImpl{bookRepo: bookRepo}
 }
 
-func (s *bookServiceImpl) DeleteBook(ctx context.Context, id uint) error {
-	return s.bookRepo.DeleteByID(ctx, id)
+func (s *bookServiceImpl) DeleteBook(ctx context.Context, id string) error {
+	bookID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	return s.bookRepo.DeleteByID(ctx, uint(bookID))
 }
 
 func (s *bookServiceImpl) GetAllBooks(ctx context.Context) ([]dto.BookResponse, error) {

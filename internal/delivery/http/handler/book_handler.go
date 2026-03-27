@@ -20,7 +20,22 @@ func NewBookHandler(bookService service.BookService) *BookHandler {
 }
 
 func (h *BookHandler) DeleteBook(c *echo.Context) error {
-	return nil
+	id := c.Param("id")
+
+	err := h.bookService.DeleteBook(c.Request().Context(), id)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	return response.Success(
+		c,
+		response.Message("success delete book"),
+	)
 }
 
 func (h *BookHandler) GetAllBooks(c *echo.Context) error {
