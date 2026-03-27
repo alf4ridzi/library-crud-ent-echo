@@ -26,8 +26,13 @@ func init() {
 	books.DefaultUpdatedAt = booksDescUpdatedAt.Default.(func() time.Time)
 	// books.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	books.UpdateDefaultUpdatedAt = booksDescUpdatedAt.UpdateDefault.(func() time.Time)
+	userMixin := schema.User{}.Mixin()
+	userMixinHooks0 := userMixin[0].Hooks()
 	userHooks := schema.User{}.Hooks()
-	user.Hooks[0] = userHooks[0]
+	user.Hooks[0] = userMixinHooks0[0]
+	user.Hooks[1] = userHooks[0]
+	userMixinInters0 := userMixin[0].Interceptors()
+	user.Interceptors[0] = userMixinInters0[0]
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

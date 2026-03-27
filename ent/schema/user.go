@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/hook"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/schema/schematype"
 )
 
 type User struct {
@@ -35,5 +36,11 @@ func (User) Edges() []ent.Edge {
 func (User) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hook.On(hook.HashPasswordHook(), ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne),
+	}
+}
+
+func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		schematype.SoftDeleteMixin{},
 	}
 }

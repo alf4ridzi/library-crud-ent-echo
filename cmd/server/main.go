@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/alf4ridzi/library-crud-ent-echo/ent/runtime"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/config"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/handler"
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/middleware"
