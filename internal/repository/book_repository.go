@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/books"
 )
 
 type BookRepository interface {
+	FindOneByID(ctx context.Context, id uint) (*ent.Books, error)
 	DeleteByID(ctx context.Context, id uint) error
 	FindAll(ctx context.Context) ([]*ent.Books, error)
 	Create(ctx context.Context, book *ent.Books, categoryIDs []uint) (*ent.Books, error)
@@ -18,6 +20,15 @@ type bookRepositoryImpl struct {
 
 func NewBookRepository(client *ent.Client) BookRepository {
 	return &bookRepositoryImpl{DB: client}
+}
+
+func (r *bookRepositoryImpl) FindOneByID(ctx context.Context, id uint) (*ent.Books, error) {
+	return r.DB.Books.Query().
+		WithBorrowings().
+		WithCategories().
+		Where(
+			books.ID(id),
+		).First(ctx)
 }
 
 func (r *bookRepositoryImpl) DeleteByID(ctx context.Context, id uint) error {

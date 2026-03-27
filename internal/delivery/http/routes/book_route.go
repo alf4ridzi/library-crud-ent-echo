@@ -19,6 +19,7 @@ func NewBookRoute(handler *handler.BookHandler) *BookRoute {
 func (r *BookRoute) Register(rg *echo.Group) {
 	books := rg.Group("/books")
 	books.GET("", r.Handler.GetAllBooks)
+	books.GET("/:id", r.Handler.GetOneBook)
 	books.Use(middleware.JwtAuth)
 	books.POST("", r.Handler.Store)
 	books.DELETE("/:id", r.Handler.DeleteBook)

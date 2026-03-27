@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
@@ -17,6 +18,36 @@ func NewBookHandler(bookService service.BookService) *BookHandler {
 	return &BookHandler{
 		bookService: bookService,
 	}
+}
+
+func (h *BookHandler) GetOneBook(c *echo.Context) error {
+	id := c.Param("id")
+
+	book, err := h.bookService.GetOneBook(c.Request().Context(), id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrBookNotFound):
+			return response.Fail(
+				c,
+				http.StatusNotFound,
+				response.Message(err.Error()),
+			)
+		default:
+			c.Logger().Error(err.Error())
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
+
+	}
+
+	return response.Success(
+		c,
+		book,
+	)
 }
 
 func (h *BookHandler) DeleteBook(c *echo.Context) error {

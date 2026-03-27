@@ -10,6 +10,7 @@ import (
 )
 
 type BookService interface {
+	GetOneBook(ctx context.Context, id string) (*dto.BookResponse, error)
 	DeleteBook(ctx context.Context, id string) error
 	GetAllBooks(ctx context.Context) ([]dto.BookResponse, error)
 	CreateNewBook(ctx context.Context, req *dto.CreateNewBookRequest) (*dto.BookResponse, error)
@@ -23,6 +24,37 @@ func NewBookService(
 	bookRepo repository.BookRepository,
 ) BookService {
 	return &bookServiceImpl{bookRepo: bookRepo}
+}
+
+func (s *bookServiceImpl) GetOneBook(ctx context.Context, id string) (*dto.BookResponse, error) {
+	bookID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	bookQuery, err := s.bookRepo.FindOneByID(ctx, uint(bookID))
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrBookNotFound
+		}
+
+		return nil, err
+	}
+
+	book := &dto.BookResponse{
+		Author:            bookQuery.Author,
+		Description:       bookQuery.Description,
+		Title:             bookQuery.Title,
+		Quantity:          bookQuery.Quantity,
+		AvailableQuantity: bookQuery.AvailableQuantity,
+		PublishDate:       bookQuery.PublishDate,
+		Categories:        bookQuery.Edges.Categories,
+		Borrowings:        bookQuery.Edges.Borrowings,
+		CreatedAt:         bookQuery.CreatedAt,
+		UpdatedAt:         bookQuery.UpdatedAt,
+	}
+
+	return book, nil
 }
 
 func (s *bookServiceImpl) DeleteBook(ctx context.Context, id string) error {
