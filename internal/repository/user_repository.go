@@ -9,6 +9,7 @@ import (
 )
 
 type UserRepository interface {
+	Delete(ctx context.Context, id uint) error
 	UpdateUserPassword(ctx context.Context, user *ent.User) error
 	UpdateByUser(ctx context.Context, user *ent.User) error
 	FindByEmail(ctx context.Context, email string) (*ent.User, error)
@@ -24,6 +25,10 @@ type userRepositoryImpl struct {
 
 func NewUserRepository(client *ent.Client) UserRepository {
 	return &userRepositoryImpl{DB: client}
+}
+
+func (r *userRepositoryImpl) Delete(ctx context.Context, id uint) error {
+	return r.DB.User.DeleteOneID(id).Exec(ctx)
 }
 
 func (r *userRepositoryImpl) UpdateUserPassword(ctx context.Context, user *ent.User) error {

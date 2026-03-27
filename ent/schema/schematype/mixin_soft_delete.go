@@ -9,9 +9,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-
-	// Gunakan alias untuk menghindari konflik nama dengan package 'ent'
-	internalEnt "github.com/alf4ridzi/library-crud-ent-echo/ent"
 	"github.com/alf4ridzi/library-crud-ent-echo/ent/hook"
 )
 
@@ -21,7 +18,8 @@ type SoftDeleteMixin struct {
 
 func (SoftDeleteMixin) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("deleted_at").Optional(),
+		field.Time("deleted_at").
+			Optional(),
 	}
 }
 
@@ -34,16 +32,30 @@ func SkipSoftDelete(parent context.Context) context.Context {
 func (d SoftDeleteMixin) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		ent.TraverseFunc(func(ctx context.Context, q ent.Query) error {
+			// Check for skip flag
 			if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
 				return nil
 			}
-			type queryWithWhereP interface {
-				WhereP(...func(*sql.Selector))
+
+			// Use the P method you already defined
+			// We cast to the interface you defined at the bottom of your file
+			if wq, ok := q.(interface{ WhereP(...func(*sql.Selector)) }); ok {
+				d.P(wq)
+				return nil
 			}
-			if qw, ok := q.(queryWithWhereP); ok {
-				d.P(qw)
+
+			// If the above fails, it's likely because the generated code
+			// isn't matching the interface. Try the manual SQL injection:
+			if traverser, ok := q.(interface {
+				Modify(modifiers ...func(*sql.Selector))
+			}); ok {
+				traverser.Modify(func(s *sql.Selector) {
+					s.Where(sql.IsNull(s.C("deleted_at")))
+				})
+				return nil
 			}
-			return nil
+
+			return nil // Or return the error if you want to be strict
 		}),
 	}
 }
@@ -59,7 +71,6 @@ func (d SoftDeleteMixin) Hooks() []ent.Hook {
 
 					type softDeleteMutation interface {
 						SetOp(ent.Op)
-						Client() *internalEnt.Client
 						SetDeletedAt(time.Time)
 						WhereP(...func(*sql.Selector))
 					}
@@ -72,7 +83,7 @@ func (d SoftDeleteMixin) Hooks() []ent.Hook {
 					d.P(mx)
 					mx.SetOp(ent.OpUpdate)
 					mx.SetDeletedAt(time.Now())
-					return mx.Client().Mutate(ctx, m)
+					return next.Mutate(ctx, m)
 				})
 			},
 			ent.OpDeleteOne|ent.OpDelete,
