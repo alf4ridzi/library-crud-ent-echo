@@ -37,5 +37,20 @@ func (h *BorrowHandler) Borrow(c *echo.Context) error {
 		)
 	}
 
-	return nil
+	bookID := c.Param("id")
+
+	err := h.bs.Borrow(c.Request().Context(), bookID, req)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	return response.Success(
+		c,
+		response.Message("borrow book success"),
+	)
 }

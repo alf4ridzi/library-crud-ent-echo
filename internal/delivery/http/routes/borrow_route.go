@@ -19,5 +19,5 @@ func NewBorrowRoute(handler *handler.BorrowHandler) *BorrowRoute {
 func (r *BorrowRoute) Register(rg *echo.Group) {
 	borrow := rg.Group("/borrows")
 	borrow.Use(middleware.JwtAuth)
-	borrow.POST("", r.Handler.Borrow)
+	borrow.POST("/:id", r.Handler.Borrow)
 }
