@@ -76,6 +76,7 @@ func (s *bookServiceImpl) GetAllBooks(ctx context.Context) ([]dto.BookResponse, 
 
 	for _, b := range queries {
 		book := dto.BookResponse{
+			ID:                b.ID,
 			Author:            b.Author,
 			Description:       b.Description,
 			Title:             b.Title,

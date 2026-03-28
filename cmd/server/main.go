@@ -81,7 +81,11 @@ func main() {
 	bookHandler := handler.NewBookHandler(bookService)
 	bookRoute := routes.NewBookRoute(bookHandler)
 
-	r := routes.NewRoutes(authRoute, userRoute, bookRoute)
+	borrowService := service.NewBorrowService(bookRepo, userRepo, client)
+	borrowHandler := handler.NewBorrowHandler(borrowService)
+	borrowRoute := routes.NewBorrowRoute(borrowHandler)
+
+	r := routes.NewRoutes(authRoute, userRoute, bookRoute, borrowRoute)
 
 	r.Register(e)
 

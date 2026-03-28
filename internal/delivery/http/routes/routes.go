@@ -6,20 +6,23 @@ import (
 )
 
 type Routes struct {
-	AuthRoute *AuthRoute
-	UserRoute *UserRoute
-	BookRoute *BookRoute
+	AuthRoute   *AuthRoute
+	UserRoute   *UserRoute
+	BookRoute   *BookRoute
+	borrowRoute *BorrowRoute
 }
 
 func NewRoutes(
 	authRoute *AuthRoute,
 	userRoute *UserRoute,
 	bookRoute *BookRoute,
+	borrowRoute *BorrowRoute,
 ) *Routes {
 	return &Routes{
-		AuthRoute: authRoute,
-		UserRoute: userRoute,
-		BookRoute: bookRoute,
+		AuthRoute:   authRoute,
+		UserRoute:   userRoute,
+		BookRoute:   bookRoute,
+		borrowRoute: borrowRoute,
 	}
 }
 
@@ -30,4 +33,5 @@ func (r *Routes) Register(router *echo.Echo) {
 	r.AuthRoute.Register(api)
 	r.UserRoute.Register(api)
 	r.BookRoute.Register(api)
+	r.borrowRoute.Register(api)
 }

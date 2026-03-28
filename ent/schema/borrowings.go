@@ -24,7 +24,7 @@ func (Borrowings) Fields() []ent.Field {
 // Edges of the Borrowings.
 func (Borrowings) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user", User.Type).Unique().Required().Field("user_id"),
-		edge.To("book", Books.Type).Unique().Required().Field("book_id"),
+		edge.To("user", User.Type).Field("user_id").Unique().Required(),
+		edge.To("book", Books.Type).Field("book_id").Unique().Required(),
 	}
 }

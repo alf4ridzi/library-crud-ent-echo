@@ -7,6 +7,7 @@ import (
 )
 
 type BookResponse struct {
+	ID                uint              `json:"id"`
 	Author            string            `json:"author"`
 	Description       string            `json:"description"`
 	Title             string            `json:"title"`

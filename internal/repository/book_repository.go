@@ -8,6 +8,9 @@ import (
 )
 
 type BookRepository interface {
+	AddAvailableQuantity(ctx context.Context, id uint, qty int) error
+	AddBorrowings(ctx context.Context, id uint, borrow *ent.Borrowings) error
+	AddQuantity(ctx context.Context, id uint, qty int) error
 	FindOneByID(ctx context.Context, id uint) (*ent.Books, error)
 	DeleteByID(ctx context.Context, id uint) error
 	FindAll(ctx context.Context) ([]*ent.Books, error)
@@ -20,6 +23,27 @@ type bookRepositoryImpl struct {
 
 func NewBookRepository(client *ent.Client) BookRepository {
 	return &bookRepositoryImpl{DB: client}
+}
+
+func (r *bookRepositoryImpl) AddBorrowings(ctx context.Context, id uint, borrow *ent.Borrowings) error {
+	return r.DB.Books.
+		UpdateOneID(id).
+		AddBorrowings(borrow).
+		Exec(ctx)
+}
+
+func (r *bookRepositoryImpl) AddAvailableQuantity(ctx context.Context, id uint, qty int) error {
+	return r.DB.Books.
+		UpdateOneID(id).
+		AddAvailableQuantity(qty).
+		Exec(ctx)
+}
+
+func (r *bookRepositoryImpl) AddQuantity(ctx context.Context, id uint, qty int) error {
+	return r.DB.Books.
+		UpdateOneID(id).
+		AddQuantity(qty).
+		Exec(ctx)
 }
 
 func (r *bookRepositoryImpl) FindOneByID(ctx context.Context, id uint) (*ent.Books, error) {
