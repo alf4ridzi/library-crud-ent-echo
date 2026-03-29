@@ -72,6 +72,12 @@ func (_u *BorrowingsUpdate) SetNillableReleaseDate(v *time.Time) *BorrowingsUpda
 	return _u
 }
 
+// ClearReleaseDate clears the value of the "release_date" field.
+func (_u *BorrowingsUpdate) ClearReleaseDate() *BorrowingsUpdate {
+	_u.mutation.ClearReleaseDate()
+	return _u
+}
+
 // SetDueDate sets the "due_date" field.
 func (_u *BorrowingsUpdate) SetDueDate(v time.Time) *BorrowingsUpdate {
 	_u.mutation.SetDueDate(v)
@@ -165,6 +171,9 @@ func (_u *BorrowingsUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if value, ok := _u.mutation.ReleaseDate(); ok {
 		_spec.SetField(borrowings.FieldReleaseDate, field.TypeTime, value)
+	}
+	if _u.mutation.ReleaseDateCleared() {
+		_spec.ClearField(borrowings.FieldReleaseDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DueDate(); ok {
 		_spec.SetField(borrowings.FieldDueDate, field.TypeTime, value)
@@ -286,6 +295,12 @@ func (_u *BorrowingsUpdateOne) SetNillableReleaseDate(v *time.Time) *BorrowingsU
 	if v != nil {
 		_u.SetReleaseDate(*v)
 	}
+	return _u
+}
+
+// ClearReleaseDate clears the value of the "release_date" field.
+func (_u *BorrowingsUpdateOne) ClearReleaseDate() *BorrowingsUpdateOne {
+	_u.mutation.ClearReleaseDate()
 	return _u
 }
 
@@ -412,6 +427,9 @@ func (_u *BorrowingsUpdateOne) sqlSave(ctx context.Context) (_node *Borrowings, 
 	}
 	if value, ok := _u.mutation.ReleaseDate(); ok {
 		_spec.SetField(borrowings.FieldReleaseDate, field.TypeTime, value)
+	}
+	if _u.mutation.ReleaseDateCleared() {
+		_spec.ClearField(borrowings.FieldReleaseDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DueDate(); ok {
 		_spec.SetField(borrowings.FieldDueDate, field.TypeTime, value)

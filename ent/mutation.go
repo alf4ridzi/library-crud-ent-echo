@@ -1209,9 +1209,22 @@ func (m *BorrowingsMutation) OldReleaseDate(ctx context.Context) (v time.Time, e
 	return oldValue.ReleaseDate, nil
 }
 
+// ClearReleaseDate clears the value of the "release_date" field.
+func (m *BorrowingsMutation) ClearReleaseDate() {
+	m.release_date = nil
+	m.clearedFields[borrowings.FieldReleaseDate] = struct{}{}
+}
+
+// ReleaseDateCleared returns if the "release_date" field was cleared in this mutation.
+func (m *BorrowingsMutation) ReleaseDateCleared() bool {
+	_, ok := m.clearedFields[borrowings.FieldReleaseDate]
+	return ok
+}
+
 // ResetReleaseDate resets all changes to the "release_date" field.
 func (m *BorrowingsMutation) ResetReleaseDate() {
 	m.release_date = nil
+	delete(m.clearedFields, borrowings.FieldReleaseDate)
 }
 
 // SetDueDate sets the "due_date" field.
@@ -1453,7 +1466,11 @@ func (m *BorrowingsMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *BorrowingsMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(borrowings.FieldReleaseDate) {
+		fields = append(fields, borrowings.FieldReleaseDate)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1466,6 +1483,11 @@ func (m *BorrowingsMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *BorrowingsMutation) ClearField(name string) error {
+	switch name {
+	case borrowings.FieldReleaseDate:
+		m.ClearReleaseDate()
+		return nil
+	}
 	return fmt.Errorf("unknown Borrowings nullable field %s", name)
 }
 

@@ -29,7 +29,7 @@ var (
 	// BorrowingsColumns holds the columns for the "borrowings" table.
 	BorrowingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "release_date", Type: field.TypeTime},
+		{Name: "release_date", Type: field.TypeTime, Nullable: true},
 		{Name: "due_date", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeUint},
 		{Name: "book_id", Type: field.TypeUint},

@@ -28,9 +28,8 @@ func TestAddBorrow(t *testing.T) {
 	borrowService := service.NewBorrowService(bookRepo, userRepo, db)
 
 	req := &dto.BorrowRequest{
-		UserID:      3,
-		ReleaseDate: time.Now(),
-		DueDate:     time.Now(),
+		UserID:  3,
+		DueDate: time.Now(),
 	}
 
 	err = borrowService.Borrow(context.Background(), "1", req)

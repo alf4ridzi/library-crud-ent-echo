@@ -40,6 +40,14 @@ func (_c *BorrowingsCreate) SetReleaseDate(v time.Time) *BorrowingsCreate {
 	return _c
 }
 
+// SetNillableReleaseDate sets the "release_date" field if the given value is not nil.
+func (_c *BorrowingsCreate) SetNillableReleaseDate(v *time.Time) *BorrowingsCreate {
+	if v != nil {
+		_c.SetReleaseDate(*v)
+	}
+	return _c
+}
+
 // SetDueDate sets the "due_date" field.
 func (_c *BorrowingsCreate) SetDueDate(v time.Time) *BorrowingsCreate {
 	_c.mutation.SetDueDate(v)
@@ -95,9 +103,6 @@ func (_c *BorrowingsCreate) check() error {
 	}
 	if _, ok := _c.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Borrowings.user_id"`)}
-	}
-	if _, ok := _c.mutation.ReleaseDate(); !ok {
-		return &ValidationError{Name: "release_date", err: errors.New(`ent: missing required field "Borrowings.release_date"`)}
 	}
 	if _, ok := _c.mutation.DueDate(); !ok {
 		return &ValidationError{Name: "due_date", err: errors.New(`ent: missing required field "Borrowings.due_date"`)}

@@ -23,7 +23,6 @@ func (r *borrowRepositoryImpl) Create(ctx context.Context, borrow *ent.Borrowing
 		Create().
 		SetBookID(borrow.BookID).
 		SetUserID(borrow.UserID).
-		SetReleaseDate(borrow.ReleaseDate).
 		SetDueDate(borrow.DueDate).
 		Save(ctx)
 }

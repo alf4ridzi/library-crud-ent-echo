@@ -62,10 +62,9 @@ func (s *borrowServiceImpl) Borrow(ctx context.Context, bookIDStr string, req *d
 	}
 
 	borrowNew := &ent.Borrowings{
-		BookID:      book.ID,
-		UserID:      user.ID,
-		ReleaseDate: req.ReleaseDate,
-		DueDate:     req.DueDate,
+		BookID:  book.ID,
+		UserID:  user.ID,
+		DueDate: req.DueDate,
 	}
 
 	_, err = borrowRepo.Create(ctx, borrowNew)

@@ -155,6 +155,16 @@ func ReleaseDateLTE(v time.Time) predicate.Borrowings {
 	return predicate.Borrowings(sql.FieldLTE(FieldReleaseDate, v))
 }
 
+// ReleaseDateIsNil applies the IsNil predicate on the "release_date" field.
+func ReleaseDateIsNil() predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldIsNull(FieldReleaseDate))
+}
+
+// ReleaseDateNotNil applies the NotNil predicate on the "release_date" field.
+func ReleaseDateNotNil() predicate.Borrowings {
+	return predicate.Borrowings(sql.FieldNotNull(FieldReleaseDate))
+}
+
 // DueDateEQ applies the EQ predicate on the "due_date" field.
 func DueDateEQ(v time.Time) predicate.Borrowings {
 	return predicate.Borrowings(sql.FieldEQ(FieldDueDate, v))

@@ -17,6 +17,10 @@ func NewBorrowHandler(borrowService service.BorrowService) *BorrowHandler {
 	return &BorrowHandler{bs: borrowService}
 }
 
+func (h *BorrowHandler) Release(c *echo.Context) error {
+	return nil
+}
+
 func (h *BorrowHandler) Borrow(c *echo.Context) error {
 	req := new(dto.BorrowRequest)
 
