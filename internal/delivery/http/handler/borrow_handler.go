@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/internal/delivery/http/dto"
@@ -45,12 +46,21 @@ func (h *BorrowHandler) Borrow(c *echo.Context) error {
 
 	err := h.bs.Borrow(c.Request().Context(), bookID, req)
 	if err != nil {
-		c.Logger().Error(err.Error())
-		return response.Error(
-			c,
-			http.StatusInternalServerError,
-			"internal server error",
-		)
+		switch {
+		case errors.Is(err, service.ErrBookAlreadyBorrow):
+			return response.Fail(
+				c,
+				http.StatusConflict,
+				err.Error(),
+			)
+		default:
+			c.Logger().Error(err.Error())
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
 	}
 
 	return response.Success(

@@ -61,6 +61,12 @@ func (s *borrowServiceImpl) Borrow(ctx context.Context, bookIDStr string, req *d
 		return err
 	}
 
+	for _, borrows := range book.Edges.Borrowings {
+		if user.ID == borrows.UserID {
+			return ErrBookAlreadyBorrow
+		}
+	}
+
 	borrowNew := &ent.Borrowings{
 		BookID:  book.ID,
 		UserID:  user.ID,
