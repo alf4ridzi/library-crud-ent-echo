@@ -15,7 +15,7 @@ type BookResponse struct {
 	AvailableQuantity int               `json:"available_quantity"`
 	PublishDate       time.Time         `json:"publish_date"`
 	Categories        []*ent.Categories `json:"categories"`
-	Borrowings        []*ent.Borrowings `json:"borrowings"`
-	CreatedAt         time.Time         `json:"created_at"`
-	UpdatedAt         time.Time         `json:"updated_at"`
+	//Borrowings        []*ent.Borrowings `json:"borrowings"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

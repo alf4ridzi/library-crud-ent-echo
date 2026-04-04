@@ -10,6 +10,7 @@ import (
 )
 
 type BorrowService interface {
+	ReleaseBorrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error
 	Borrow(ctx context.Context, bookID string, req *dto.BorrowRequest) error
 }
 
@@ -28,6 +29,41 @@ func NewBorrowService(
 		bookRepo: bookRepo,
 		userRepo: userRepo,
 		DB:       db}
+}
+
+func (s *borrowServiceImpl) ReleaseBorrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error {
+	bookID, err := strconv.ParseUint(bookIDStr, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	book, err := s.bookRepo.FindOneByID(ctx, uint(bookID))
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrBookNotFound
+		}
+
+		return err
+	}
+
+	user, err := s.bookRepo.FindOneByID(ctx, req.UserID)
+	if err != nil {
+		return err
+	}
+
+	borrowToRemove := new(ent.Borrowings)
+
+	for _, borrow := range book.Edges.Borrowings {
+		if borrow.UserID == user.ID {
+			borrowToRemove = borrow
+		}
+	}
+
+	if borrowToRemove == nil {
+		return ErrUserIsNotBorrowBook
+	}
+
+	return nil
 }
 
 func (s *borrowServiceImpl) Borrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error {

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
 )
@@ -16,6 +17,10 @@ type borrowRepositoryImpl struct {
 
 func NewBorrowRepository(client *ent.Client) BorrowRepository {
 	return &borrowRepositoryImpl{DB: client}
+}
+
+func (r *borrowRepositoryImpl) UpdateReleaseDate(ctx context.Context, release time.Time) error {
+	return nil
 }
 
 func (r *borrowRepositoryImpl) Create(ctx context.Context, borrow *ent.Borrowings) (*ent.Borrowings, error) {

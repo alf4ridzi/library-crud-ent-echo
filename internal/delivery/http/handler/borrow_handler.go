@@ -18,7 +18,7 @@ func NewBorrowHandler(borrowService service.BorrowService) *BorrowHandler {
 	return &BorrowHandler{bs: borrowService}
 }
 
-func (h *BorrowHandler) Release(c *echo.Context) error {
+func (h *BorrowHandler) ReleaseBorrow(c *echo.Context) error {
 	return nil
 }
 

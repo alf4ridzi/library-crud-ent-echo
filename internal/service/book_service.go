@@ -84,9 +84,9 @@ func (s *bookServiceImpl) GetAllBooks(ctx context.Context) ([]dto.BookResponse, 
 			AvailableQuantity: b.AvailableQuantity,
 			PublishDate:       b.PublishDate,
 			Categories:        b.Edges.Categories,
-			Borrowings:        b.Edges.Borrowings,
-			CreatedAt:         b.CreatedAt,
-			UpdatedAt:         b.UpdatedAt,
+			// Borrowings:        b.Edges.Borrowings,
+			CreatedAt: b.CreatedAt,
+			UpdatedAt: b.UpdatedAt,
 		}
 
 		books = append(books, book)
