@@ -5,9 +5,12 @@ import (
 	"time"
 
 	"github.com/alf4ridzi/library-crud-ent-echo/ent"
+	"github.com/alf4ridzi/library-crud-ent-echo/ent/borrowings"
 )
 
 type BorrowRepository interface {
+	FindAllByBookID(ctx context.Context, bookID uint) ([]*ent.Borrowings, error)
+	FindOneByBookID(ctx context.Context, bookID uint) (*ent.Borrowings, error)
 	Create(ctx context.Context, borrow *ent.Borrowings) (*ent.Borrowings, error)
 }
 
@@ -17,6 +20,26 @@ type borrowRepositoryImpl struct {
 
 func NewBorrowRepository(client *ent.Client) BorrowRepository {
 	return &borrowRepositoryImpl{DB: client}
+}
+
+func (r *borrowRepositoryImpl) FindAllByBookID(ctx context.Context, bookID uint) ([]*ent.Borrowings, error) {
+	return r.DB.Borrowings.
+		Query().
+		WithUser().
+		WithBook().
+		Where(
+			borrowings.BookID(bookID),
+		).All(ctx)
+}
+
+func (r *borrowRepositoryImpl) FindOneByBookID(ctx context.Context, bookID uint) (*ent.Borrowings, error) {
+	return r.DB.Borrowings.
+		Query().
+		WithUser().
+		WithBook().
+		Where(
+			borrowings.BookID(bookID),
+		).First(ctx)
 }
 
 func (r *borrowRepositoryImpl) UpdateReleaseDate(ctx context.Context, release time.Time) error {

@@ -23,4 +23,5 @@ func (r *BookRoute) Register(rg *echo.Group) {
 	books.Use(middleware.JwtAuth)
 	books.POST("", r.Handler.Store)
 	books.DELETE("/:id", r.Handler.DeleteBook)
+	books.GET("/:id/borrows", r.Handler.GetOneBookBorrow)
 }

@@ -67,6 +67,7 @@ func main() {
 	e.Use(middleware.TimeoutMiddleware)
 
 	userRepo := repository.NewUserRepository(client)
+	borrowRepo := repository.NewBorrowRepository(client)
 
 	authService := service.NewAuthService(userRepo)
 	authHandler := handler.NewAuthHandler(authService)
@@ -77,7 +78,7 @@ func main() {
 	userRoute := routes.NewUserRoute(userHandler)
 
 	bookRepo := repository.NewBookRepository(client)
-	bookService := service.NewBookService(bookRepo)
+	bookService := service.NewBookService(bookRepo, borrowRepo)
 	bookHandler := handler.NewBookHandler(bookService)
 	bookRoute := routes.NewBookRoute(bookHandler)
 

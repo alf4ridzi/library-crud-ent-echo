@@ -20,6 +20,35 @@ func NewBookHandler(bookService service.BookService) *BookHandler {
 	}
 }
 
+func (h *BookHandler) GetOneBookBorrow(c *echo.Context) error {
+	id := c.Param("id")
+
+	borrows, err := h.bookService.GetOneBookBorrows(c.Request().Context(), id)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrBookNotFound):
+			return response.Fail(
+				c,
+				http.StatusNotFound,
+				response.Message(err.Error()),
+			)
+		default:
+			c.Logger().Error(err.Error())
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
+
+	}
+
+	return response.Success(
+		c,
+		borrows,
+	)
+}
+
 func (h *BookHandler) GetOneBook(c *echo.Context) error {
 	id := c.Param("id")
 

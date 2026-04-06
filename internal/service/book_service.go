@@ -10,6 +10,7 @@ import (
 )
 
 type BookService interface {
+	GetOneBookBorrows(ctx context.Context, id string) ([]dto.BorrowResponse, error)
 	GetOneBook(ctx context.Context, id string) (*dto.BookResponse, error)
 	DeleteBook(ctx context.Context, id string) error
 	GetAllBooks(ctx context.Context) ([]dto.BookResponse, error)
@@ -17,13 +18,48 @@ type BookService interface {
 }
 
 type bookServiceImpl struct {
-	bookRepo repository.BookRepository
+	bookRepo   repository.BookRepository
+	borrowRepo repository.BorrowRepository
 }
 
 func NewBookService(
 	bookRepo repository.BookRepository,
+	borrowRepo repository.BorrowRepository,
 ) BookService {
 	return &bookServiceImpl{bookRepo: bookRepo}
+}
+
+func (s *bookServiceImpl) GetOneBookBorrows(ctx context.Context, id string) ([]dto.BorrowResponse, error) {
+	bookID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	borrowsQuery, err := s.borrowRepo.FindAllByBookID(ctx, uint(bookID))
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrBookNotFound
+		}
+
+		return nil, err
+	}
+
+	var borrows []dto.BorrowResponse
+
+	for _, borrowQuery := range borrowsQuery {
+		borrow := dto.BorrowResponse{
+			ID: borrowQuery.ID,
+			User: dto.UserBorrowResponse{
+				Name: borrowQuery.Edges.User.Name,
+			},
+			ReleaseDate: &borrowQuery.ReleaseDate,
+			DueDate:     borrowQuery.DueDate,
+		}
+
+		borrows = append(borrows, borrow)
+	}
+
+	return borrows, nil
 }
 
 func (s *bookServiceImpl) GetOneBook(ctx context.Context, id string) (*dto.BookResponse, error) {
@@ -49,9 +85,9 @@ func (s *bookServiceImpl) GetOneBook(ctx context.Context, id string) (*dto.BookR
 		AvailableQuantity: bookQuery.AvailableQuantity,
 		PublishDate:       bookQuery.PublishDate,
 		Categories:        bookQuery.Edges.Categories,
-		Borrowings:        bookQuery.Edges.Borrowings,
-		CreatedAt:         bookQuery.CreatedAt,
-		UpdatedAt:         bookQuery.UpdatedAt,
+		// Borrowings:        bookQuery.Edges.Borrowings,
+		CreatedAt: bookQuery.CreatedAt,
+		UpdatedAt: bookQuery.UpdatedAt,
 	}
 
 	return book, nil
@@ -120,9 +156,9 @@ func (s *bookServiceImpl) CreateNewBook(ctx context.Context,
 		AvailableQuantity: book.AvailableQuantity,
 		PublishDate:       book.PublishDate,
 		Categories:        book.Edges.Categories,
-		Borrowings:        book.Edges.Borrowings,
-		CreatedAt:         book.CreatedAt,
-		UpdatedAt:         book.UpdatedAt,
+		// Borrowings:        book.Edges.Borrowings,
+		CreatedAt: book.CreatedAt,
+		UpdatedAt: book.UpdatedAt,
 	}
 
 	return response, nil
