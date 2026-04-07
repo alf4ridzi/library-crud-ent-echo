@@ -26,7 +26,7 @@ func NewBookService(
 	bookRepo repository.BookRepository,
 	borrowRepo repository.BorrowRepository,
 ) BookService {
-	return &bookServiceImpl{bookRepo: bookRepo}
+	return &bookServiceImpl{bookRepo: bookRepo, borrowRepo: borrowRepo}
 }
 
 func (s *bookServiceImpl) GetOneBookBorrows(ctx context.Context, id string) ([]dto.BorrowResponse, error) {
@@ -35,7 +35,7 @@ func (s *bookServiceImpl) GetOneBookBorrows(ctx context.Context, id string) ([]d
 		return nil, err
 	}
 
-	borrowsQuery, err := s.borrowRepo.FindAllByBookID(ctx, uint(bookID))
+	borrowsQuery, err := s.borrowRepo.FindAllByBookIDBorrow(ctx, uint(bookID))
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, ErrBookNotFound
@@ -47,10 +47,14 @@ func (s *bookServiceImpl) GetOneBookBorrows(ctx context.Context, id string) ([]d
 	var borrows []dto.BorrowResponse
 
 	for _, borrowQuery := range borrowsQuery {
+		if borrowQuery.Edges.User == nil {
+			continue
+		}
+
 		borrow := dto.BorrowResponse{
 			ID: borrowQuery.ID,
 			User: dto.UserBorrowResponse{
-				Name: borrowQuery.Edges.User.Name,
+				Name: *borrowQuery.Edges.User.Name,
 			},
 			ReleaseDate: &borrowQuery.ReleaseDate,
 			DueDate:     borrowQuery.DueDate,

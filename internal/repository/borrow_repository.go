@@ -9,7 +9,7 @@ import (
 )
 
 type BorrowRepository interface {
-	FindAllByBookID(ctx context.Context, bookID uint) ([]*ent.Borrowings, error)
+	FindAllByBookIDBorrow(ctx context.Context, bookID uint) ([]*ent.Borrowings, error)
 	FindOneByBookID(ctx context.Context, bookID uint) (*ent.Borrowings, error)
 	Create(ctx context.Context, borrow *ent.Borrowings) (*ent.Borrowings, error)
 }
@@ -22,13 +22,14 @@ func NewBorrowRepository(client *ent.Client) BorrowRepository {
 	return &borrowRepositoryImpl{DB: client}
 }
 
-func (r *borrowRepositoryImpl) FindAllByBookID(ctx context.Context, bookID uint) ([]*ent.Borrowings, error) {
+func (r *borrowRepositoryImpl) FindAllByBookIDBorrow(ctx context.Context, bookID uint) ([]*ent.Borrowings, error) {
 	return r.DB.Borrowings.
 		Query().
 		WithUser().
 		WithBook().
 		Where(
 			borrowings.BookID(bookID),
+			borrowings.HasUser(),
 		).All(ctx)
 }
 
