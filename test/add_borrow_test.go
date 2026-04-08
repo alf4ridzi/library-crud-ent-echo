@@ -24,8 +24,9 @@ func TestAddBorrow(t *testing.T) {
 
 	bookRepo := repository.NewBookRepository(db)
 	userRepo := repository.NewUserRepository(db)
+	borrowRepo := repository.NewBorrowRepository(db)
 
-	borrowService := service.NewBorrowService(bookRepo, userRepo, db)
+	borrowService := service.NewBorrowService(bookRepo, userRepo, borrowRepo, db)
 
 	req := &dto.BorrowRequest{
 		UserID:  3,

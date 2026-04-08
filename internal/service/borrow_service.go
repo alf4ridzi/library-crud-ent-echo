@@ -10,28 +10,31 @@ import (
 )
 
 type BorrowService interface {
-	ReleaseBorrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error
+	ReleaseBorrow(ctx context.Context, bookIDStr string, req *dto.ReleaseBorrowRequest) error
 	Borrow(ctx context.Context, bookID string, req *dto.BorrowRequest) error
 }
 
 type borrowServiceImpl struct {
-	bookRepo repository.BookRepository
-	userRepo repository.UserRepository
-	DB       *ent.Client
+	bookRepo   repository.BookRepository
+	userRepo   repository.UserRepository
+	borrowRepo repository.BorrowRepository
+	DB         *ent.Client
 }
 
 func NewBorrowService(
 	bookRepo repository.BookRepository,
 	userRepo repository.UserRepository,
+	borrowRepo repository.BorrowRepository,
 	db *ent.Client,
 ) BorrowService {
 	return &borrowServiceImpl{
-		bookRepo: bookRepo,
-		userRepo: userRepo,
-		DB:       db}
+		bookRepo:   bookRepo,
+		userRepo:   userRepo,
+		borrowRepo: borrowRepo,
+		DB:         db}
 }
 
-func (s *borrowServiceImpl) ReleaseBorrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error {
+func (s *borrowServiceImpl) ReleaseBorrow(ctx context.Context, bookIDStr string, req *dto.ReleaseBorrowRequest) error {
 	bookID, err := strconv.ParseUint(bookIDStr, 10, 64)
 	if err != nil {
 		return err
@@ -51,19 +54,23 @@ func (s *borrowServiceImpl) ReleaseBorrow(ctx context.Context, bookIDStr string,
 		return err
 	}
 
-	borrowToRemove := new(ent.Borrowings)
+	var borrowToUpdate *ent.Borrowings
 
 	for _, borrow := range book.Edges.Borrowings {
-		if borrow.UserID == user.ID {
-			borrowToRemove = borrow
+		if borrow.UserID == user.ID && borrow.BookID == book.ID {
+			if borrow.ReleaseDate != nil {
+				return ErrBorrowAlreadyRelease
+			}
+
+			borrow.ReleaseDate = &req.ReleaseDate
+
+			borrowToUpdate = borrow
+
+			break
 		}
 	}
 
-	if borrowToRemove == nil {
-		return ErrUserIsNotBorrowBook
-	}
-
-	return nil
+	return s.borrowRepo.UpdateOneByID(ctx, borrowToUpdate.ID, borrowToUpdate)
 }
 
 func (s *borrowServiceImpl) Borrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error {
