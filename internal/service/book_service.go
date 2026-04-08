@@ -82,6 +82,7 @@ func (s *bookServiceImpl) GetOneBook(ctx context.Context, id string) (*dto.BookR
 	}
 
 	book := &dto.BookResponse{
+		ID:                bookQuery.ID,
 		Author:            bookQuery.Author,
 		Description:       bookQuery.Description,
 		Title:             bookQuery.Title,
