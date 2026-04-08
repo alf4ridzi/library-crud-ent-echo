@@ -141,7 +141,7 @@ func (_c *BorrowingsCreate) createSpec() (*Borrowings, *sqlgraph.CreateSpec) {
 	)
 	if value, ok := _c.mutation.ReleaseDate(); ok {
 		_spec.SetField(borrowings.FieldReleaseDate, field.TypeTime, value)
-		_node.ReleaseDate = value
+		_node.ReleaseDate = &value
 	}
 	if value, ok := _c.mutation.DueDate(); ok {
 		_spec.SetField(borrowings.FieldDueDate, field.TypeTime, value)

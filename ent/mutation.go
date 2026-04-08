@@ -1195,7 +1195,7 @@ func (m *BorrowingsMutation) ReleaseDate() (r time.Time, exists bool) {
 // OldReleaseDate returns the old "release_date" field's value of the Borrowings entity.
 // If the Borrowings object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BorrowingsMutation) OldReleaseDate(ctx context.Context) (v time.Time, err error) {
+func (m *BorrowingsMutation) OldReleaseDate(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldReleaseDate is only allowed on UpdateOne operations")
 	}

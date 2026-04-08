@@ -37,7 +37,7 @@ func TestFindAllByBookIDBorrows(t *testing.T) {
 			User: dto.UserBorrowResponse{
 				Name: *name,
 			},
-			ReleaseDate: &borrowQuery.ReleaseDate,
+			ReleaseDate: borrowQuery.ReleaseDate,
 			DueDate:     borrowQuery.DueDate,
 		}
 

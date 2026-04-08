@@ -24,7 +24,7 @@ type Borrowings struct {
 	// UserID holds the value of the "user_id" field.
 	UserID uint `json:"user_id,omitempty"`
 	// ReleaseDate holds the value of the "release_date" field.
-	ReleaseDate time.Time `json:"release_date,omitempty"`
+	ReleaseDate *time.Time `json:"release_date,omitempty"`
 	// DueDate holds the value of the "due_date" field.
 	DueDate time.Time `json:"due_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -112,7 +112,8 @@ func (_m *Borrowings) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field release_date", values[i])
 			} else if value.Valid {
-				_m.ReleaseDate = value.Time
+				_m.ReleaseDate = new(time.Time)
+				*_m.ReleaseDate = value.Time
 			}
 		case borrowings.FieldDueDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -172,8 +173,10 @@ func (_m *Borrowings) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("release_date=")
-	builder.WriteString(_m.ReleaseDate.Format(time.ANSIC))
+	if v := _m.ReleaseDate; v != nil {
+		builder.WriteString("release_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("due_date=")
 	builder.WriteString(_m.DueDate.Format(time.ANSIC))

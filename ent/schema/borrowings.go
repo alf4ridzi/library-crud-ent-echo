@@ -16,7 +16,7 @@ func (Borrowings) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint("book_id"),
 		field.Uint("user_id"),
-		field.Time("release_date").Optional(),
+		field.Time("release_date").Optional().Nillable(),
 		field.Time("due_date"),
 	}
 }
