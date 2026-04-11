@@ -19,6 +19,24 @@ func NewBorrowHandler(borrowService service.BorrowService) *BorrowHandler {
 }
 
 func (h *BorrowHandler) ReleaseBorrow(c *echo.Context) error {
+	req := new(dto.ReleaseBorrowRequest)
+
+	if err := c.Bind(req); err != nil {
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	if err := c.Validate(req); err != nil {
+		return response.Fail(
+			c,
+			http.StatusBadRequest,
+			response.ValidationErrors(err),
+		)
+	}
+
 	return nil
 }
 
