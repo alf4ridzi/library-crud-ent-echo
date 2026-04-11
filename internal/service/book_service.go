@@ -54,7 +54,9 @@ func (s *bookServiceImpl) GetOneBookBorrows(ctx context.Context, id string) ([]d
 		borrow := dto.BorrowResponse{
 			ID: borrowQuery.ID,
 			User: dto.UserBorrowResponse{
-				Name: *borrowQuery.Edges.User.Name,
+				ID:    borrowQuery.UserID,
+				Name:  *borrowQuery.Edges.User.Name,
+				Email: borrowQuery.Edges.User.Email,
 			},
 			ReleaseDate: borrowQuery.ReleaseDate,
 			DueDate:     borrowQuery.DueDate,
