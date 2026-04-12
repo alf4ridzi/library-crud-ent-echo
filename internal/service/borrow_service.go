@@ -40,37 +40,18 @@ func (s *borrowServiceImpl) ReleaseBorrow(ctx context.Context, bookIDStr string,
 		return err
 	}
 
-	book, err := s.bookRepo.FindOneByID(ctx, uint(bookID))
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return ErrBookNotFound
-		}
-
-		return err
-	}
-
-	user, err := s.bookRepo.FindOneByID(ctx, req.UserID)
+	borrow, err := s.borrowRepo.FindByBookIDAndUserID(ctx, uint(bookID), req.UserID)
 	if err != nil {
 		return err
 	}
 
-	var borrowToUpdate *ent.Borrowings
-
-	for _, borrow := range book.Edges.Borrowings {
-		if borrow.UserID == user.ID && borrow.BookID == book.ID {
-			if borrow.ReleaseDate != nil {
-				return ErrBorrowAlreadyRelease
-			}
-
-			borrow.ReleaseDate = &req.ReleaseDate
-
-			borrowToUpdate = borrow
-
-			break
-		}
+	if borrow.ReleaseDate != nil {
+		return ErrBorrowAlreadyRelease
 	}
 
-	return s.borrowRepo.UpdateOneByID(ctx, borrowToUpdate.ID, borrowToUpdate)
+	borrow.ReleaseDate = &req.ReleaseDate
+
+	return s.borrowRepo.UpdateOneByID(ctx, borrow.ID, borrow)
 }
 
 func (s *borrowServiceImpl) Borrow(ctx context.Context, bookIDStr string, req *dto.BorrowRequest) error {

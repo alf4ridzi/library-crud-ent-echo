@@ -21,15 +21,15 @@ func NewBorrowHandler(borrowService service.BorrowService) *BorrowHandler {
 func (h *BorrowHandler) ReleaseBorrow(c *echo.Context) error {
 	req := new(dto.ReleaseBorrowRequest)
 
-	if err := c.Bind(req); err != nil {
-		return response.Error(
-			c,
-			http.StatusInternalServerError,
-			"internal server error",
-		)
-	}
+	if err := bindAndValidateReq(c, req); err != nil {
+		if errors.Is(err, ErrBind) {
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
 
-	if err := c.Validate(req); err != nil {
 		return response.Fail(
 			c,
 			http.StatusBadRequest,
@@ -37,7 +37,31 @@ func (h *BorrowHandler) ReleaseBorrow(c *echo.Context) error {
 		)
 	}
 
-	return nil
+	bookID := c.Param("id")
+
+	err := h.bs.ReleaseBorrow(c.Request().Context(), bookID, req)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrBorrowAlreadyRelease):
+			return response.Fail(
+				c,
+				http.StatusConflict,
+				response.Message(err.Error()),
+			)
+		default:
+			return response.Error(
+				c,
+				http.StatusInternalServerError,
+				"internal server error",
+			)
+		}
+
+	}
+
+	return response.Success(
+		c,
+		nil,
+	)
 }
 
 func (h *BorrowHandler) Borrow(c *echo.Context) error {

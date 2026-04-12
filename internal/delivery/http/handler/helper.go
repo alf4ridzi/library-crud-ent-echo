@@ -1,12 +1,12 @@
-package helpers
+package handler
 
 import (
 	"github.com/labstack/echo/v5"
 )
 
-func BindAndValidateReq(c *echo.Context, i any) error {
+func bindAndValidateReq(c *echo.Context, i any) error {
 	if err := c.Bind(i); err != nil {
-		return err
+		return ErrBind
 	}
 
 	if err := c.Validate(i); err != nil {

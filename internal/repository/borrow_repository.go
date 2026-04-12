@@ -9,6 +9,7 @@ import (
 )
 
 type BorrowRepository interface {
+	FindByBookIDAndUserID(ctx context.Context, bookID uint, userID uint) (*ent.Borrowings, error)
 	UpdateOneByID(ctx context.Context, id int, borrow *ent.Borrowings) error
 	FindAllByBookIDBorrow(ctx context.Context, bookID uint) ([]*ent.Borrowings, error)
 	FindOneByBookID(ctx context.Context, bookID uint) (*ent.Borrowings, error)
@@ -21,6 +22,15 @@ type borrowRepositoryImpl struct {
 
 func NewBorrowRepository(client *ent.Client) BorrowRepository {
 	return &borrowRepositoryImpl{DB: client}
+}
+
+func (r *borrowRepositoryImpl) FindByBookIDAndUserID(ctx context.Context, bookID uint, userID uint) (*ent.Borrowings, error) {
+	return r.DB.Borrowings.
+		Query().
+		Where(
+			borrowings.UserID(userID),
+			borrowings.BookID(bookID),
+		).First(ctx)
 }
 
 func (r *borrowRepositoryImpl) UpdateOneByID(ctx context.Context, id int, borrow *ent.Borrowings) error {

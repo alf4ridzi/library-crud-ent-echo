@@ -9,4 +9,5 @@ var (
 	ErrBookAlreadyBorrow    = errors.New("you already borrowing this book")
 	ErrUserIsNotBorrowBook  = errors.New("user is not borrowing this book")
 	ErrBorrowAlreadyRelease = errors.New("borrow already released")
+	ErrBorrowNotFound       = errors.New("borrow not found")
 )
