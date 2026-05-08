@@ -10,6 +10,7 @@ import (
 )
 
 type BookService interface {
+	GetBookCategories(ctx context.Context) ([]dto.CategoryResponse, error)
 	GetOneBookBorrows(ctx context.Context, id string) ([]dto.BorrowResponse, error)
 	GetOneBook(ctx context.Context, id string) (*dto.BookResponse, error)
 	DeleteBook(ctx context.Context, id string) error
@@ -27,6 +28,26 @@ func NewBookService(
 	borrowRepo repository.BorrowRepository,
 ) BookService {
 	return &bookServiceImpl{bookRepo: bookRepo, borrowRepo: borrowRepo}
+}
+
+func (s *bookServiceImpl) GetBookCategories(ctx context.Context) ([]dto.CategoryResponse, error) {
+	categories, err := s.bookRepo.FindBookCategories(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var categoriesResponse []dto.CategoryResponse
+
+	for _, category := range categories {
+		categoryResponse := dto.CategoryResponse{
+			Name: category.Name,
+			Code: category.Code,
+		}
+
+		categoriesResponse = append(categoriesResponse, categoryResponse)
+	}
+
+	return categoriesResponse, nil
 }
 
 func (s *bookServiceImpl) GetOneBookBorrows(ctx context.Context, id string) ([]dto.BorrowResponse, error) {

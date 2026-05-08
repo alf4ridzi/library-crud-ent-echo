@@ -8,6 +8,7 @@ import (
 )
 
 type BookRepository interface {
+	FindBookCategories(ctx context.Context) ([]*ent.Categories, error)
 	RemoveBorrowings(ctx context.Context, id uint, borrow *ent.Borrowings) error
 	AddAvailableQuantity(ctx context.Context, id uint, qty int) error
 	AddBorrowings(ctx context.Context, id uint, borrow *ent.Borrowings) error
@@ -24,6 +25,10 @@ type bookRepositoryImpl struct {
 
 func NewBookRepository(client *ent.Client) BookRepository {
 	return &bookRepositoryImpl{DB: client}
+}
+
+func (r *bookRepositoryImpl) FindBookCategories(ctx context.Context) ([]*ent.Categories, error) {
+	return r.DB.Categories.Query().All(ctx)
 }
 
 func (r *bookRepositoryImpl) RemoveBorrowings(ctx context.Context, id uint, borrow *ent.Borrowings) error {

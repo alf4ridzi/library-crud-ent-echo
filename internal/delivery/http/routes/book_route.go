@@ -20,6 +20,7 @@ func (r *BookRoute) Register(rg *echo.Group) {
 	books := rg.Group("/books")
 	books.GET("", r.Handler.GetAllBooks)
 	books.GET("/:id", r.Handler.GetOneBook)
+	books.GET("/categories", r.Handler.GetBookCategories)
 	books.Use(middleware.JwtAuth)
 	books.POST("", r.Handler.Store)
 	books.DELETE("/:id", r.Handler.DeleteBook)

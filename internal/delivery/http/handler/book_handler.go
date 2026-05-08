@@ -20,6 +20,19 @@ func NewBookHandler(bookService service.BookService) *BookHandler {
 	}
 }
 
+func (h *BookHandler) GetBookCategories(c *echo.Context) error {
+	categories, err := h.bookService.GetBookCategories(c.Request().Context())
+	if err != nil {
+		return response.Error(
+			c,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+	}
+
+	return response.Success(c, categories)
+}
+
 func (h *BookHandler) GetOneBookBorrow(c *echo.Context) error {
 	id := c.Param("id")
 
